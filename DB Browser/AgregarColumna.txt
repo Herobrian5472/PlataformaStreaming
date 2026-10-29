@@ -1,0 +1,8 @@
+ALTER TABLE Contenidos
+ADD COLUMN estado INTEGER NOT NULL DEFAULT 1;
+
+ALTER TABLE Contenidos: modifica la estructura de la tabla Contenidos
+ADD COLUMN estado: agrega la columna nueva 'estado'
+INTEGER: SQLite unsa un entero para representar el 'estado' booleano (1 o 0)
+NOT NULL: no permite que esté el campo vacío en el registro
+DEFAULT 1: los contenidos nuevos tendrán 'estado' Activo por defecto

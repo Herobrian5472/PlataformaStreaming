@@ -1,0 +1,72 @@
+using Microsoft.Data.Sqlite;
+
+namespace PlataformaStreaming
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            try
+            {
+                using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
+                {
+                    // @ permite escribir uan cadena de texto en varias lineas sin tener que concatenarlas ni agregar \n manualmente (es de C#, no de SQL)
+
+                    string sql = @"
+                        CREATE TABLE IF NOT EXISTS Usuarios (
+                            usuario_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            nombre_usuario TEXT NOT NULL UNIQUE,
+                            email TEXT NOT NULL UNIQUE,
+                            password_hash TEXT NOT NULL
+                        );
+
+                        CREATE TABLE IF NOT EXISTS Contenidos (
+                            contenido_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            titulo TEXT NOT NULL,
+                            descricion TEXT,
+                            anio_lanzamiento INTEGER,
+                            tipo TEXT NOT NULL,
+                            usuario_id INTEGER,
+                            FOREIGN KEY (usuario_id)
+                                REFERENCES Usuarios(usuario_id)
+                        );
+
+                        CREATE TABLE IF NOT EXISTS Generos (
+                            genero_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            nombre TEXT NOT NULL UNIQUE
+                        );
+
+                        CREATE TABLE IF NOT EXISTS ContenidoGenero (
+                            contenido_id INTEGER NOT NULL,
+                            genero_id INTEGER NOT NULL,
+                            PRIMARY KEY (contenido_id, genero_id)
+                            FOREIGN KEY (contenido_id)
+                                REFERENCES Contenidos(contenido_id)
+                            FOREIGN KEY (genero_id)
+                                REFERENCES Generos(genero_id)
+                        );
+
+                    ";
+                    // ContenidoGenero: su clave primaria se compone de dos campos para evitar asignar dos veces el mismo género al mismo contenido
+
+                    using (SqliteCommand comando = new SqliteCommand(sql, conexion))
+                    // creamos la variable comando para el objeto SqliteCommand que se conecta a conexion (que apunta a la DB) usando las instruciones de la variable sql (creada anteriormente como string sql) 
+                    {
+                        comando.ExecuteNonQuery(); // ejecuta las instrucciones SQL que no necesitan devolver un conjunto de resultados
+                    }
+
+                    Console.WriteLine("¡Base de datos creada con éxito!");
+                    Console.WriteLine("Ubicación: " + conexion.DataSource);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+            Console.WriteLine("\nPresioná una tecla para salir...");
+            Console.ReadKey();
+        }
+    }
+}

@@ -1,0 +1,49 @@
+using Microsoft.Data.Sqlite;
+
+namespace PlataformaStreaming
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            try
+            {
+                using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
+                {
+                    // @ permite escribir uan cadena de texto en varias lineas sin tener que concatenarlas ni agregar \n manualmente (es de C#, no de SQL)
+
+                    string sql = @"
+                        
+                        INSERT INTO Contenidos
+                            (titulo, descricion, anio_lanzamiento, tipo)
+                        VALUES
+                            (@titulo, @descricion, @anio, @tipo);
+
+                    ";
+                    // ContenidoGenero: su clave primaria se compone de dos campos para evitar asignar dos veces el mismo género al mismo contenido
+
+                    using (SqliteCommand comando = new SqliteCommand(sql, conexion))
+                    // creamos la variable comando para el objeto SqliteCommand que se conecta a conexion (que apunta a la DB) usando las instruciones de la variable sql (creada anteriormente como string sql) 
+                    {
+                        comando.Parameters.AddWithValue("@titulo", "Interstellar");
+                        comando.Parameters.AddWithValue("@descricion", "Un grupo de astronautas busca un nuevo hogar para la humanidad.");
+                        comando.Parameters.AddWithValue("@anio", 2014);
+                        comando.Parameters.AddWithValue("@tipo", "Pelicula"); 
+
+                        comando.ExecuteNonQuery(); // ejecuta las instrucciones SQL que no necesitan devolver un conjunto de resultados
+                    }
+
+                    Console.WriteLine("¡Película agregada correctamente!");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+            Console.WriteLine("\nPresioná una tecla para salir...");
+            Console.ReadKey();
+        }
+    }
+}

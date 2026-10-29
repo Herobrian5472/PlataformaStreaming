@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS Historial(
+	historial_id INTEGER PRIMARY KEI AUTOINCREMENT,
+	contenido_id INTEGER,
+	operacion TEXT NOT NULL,
+	fecha_hora TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+	detalles TEXT,
+	usuario_id INTEGER,
+	FOREIGN KEY (contenido_id) REFERENCES Contenidos(contenido_id),
+	FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id)
+);

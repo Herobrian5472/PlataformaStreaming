@@ -1,0 +1,16 @@
+DarBajaContenido(int id)
+        {
+            string sql = @"
+                UPDATE Contenidos
+                SET estado = 0
+                WHERE contenido_id = @id
+                    AND tipo = @tipo
+                    AND estado = 1;
+            ";
+
+
+UPDATE cambia el registro existente de la tabla Contenidos
+SET estado = 0: marca el contenido como inactivo
+contenido_id = @id: selecciona la pelicula indicada
+tipo = @tipo: limita la operacion a películas
+estado = 1: solo permite dar de baja contenidos que estén activos
