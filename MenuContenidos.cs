@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static PlataformaStreaming.UtilidadesConsola;
 
 namespace PlataformaStreaming
 {
@@ -20,7 +21,8 @@ namespace PlataformaStreaming
                 Console.WriteLine("4. Eliminar película");
                 Console.WriteLine("5. Dar de baja una película");
                 Console.WriteLine("6. Ver peliculas dadas de baja");
-                Console.WriteLine("7. Volver");
+                Console.WriteLine("7. Reactivar una pelicula");
+                Console.WriteLine("8. Volver");
                 Console.Write("Seleccione una opcion: ");
 
                 if (!int.TryParse(Console.ReadLine(), out opcion)) // si no ingresa un número
@@ -310,6 +312,66 @@ namespace PlataformaStreaming
                         }
 
                     case 7:
+                        {
+                            List<Contenido> peliculasBajas = contenidoDAO.MostrarBajas();
+
+                            if (peliculasBajas.Count == 0)
+                            {
+                                MostrarTexto(
+                                    ConsoleColor.Yellow,
+                                    "No hay películas dadas de baja."
+                                );
+                            }
+                            else
+                            {
+                                MostrarTexto(
+                                    ConsoleColor.Yellow,
+                                    "--- PELICULAS PARA REACTIVAR---"
+                                );
+
+                                foreach (Contenido pelicula in peliculasBajas)
+                                {
+                                    Console.WriteLine(
+                                        pelicula.ContenidoId + " - " +
+                                        pelicula.Titulo + " (" +
+                                        pelicula.AnioLanzamiento + ")"
+                                    );
+                                }
+
+                                Console.WriteLine("\nID de la película a reactivar: ");
+
+                                if (int.TryParse(Console.ReadLine(), out int id))
+                                {
+                                    bool resultado = contenidoDAO.DarAltaContenido(id);
+
+                                    if (resultado)
+                                    {
+                                        MostrarTexto(
+                                            ConsoleColor.Green,
+                                            "Película reactivada correctamente."
+                                        );
+                                    }
+                                    else
+                                    {
+                                        MostrarTexto(
+                                            ConsoleColor.Red,
+                                            "No se encontró una película dada de baja con ese ID."
+                                        );
+                                    }
+                                }
+                                else
+                                {
+                                    MostrarTexto(
+                                        ConsoleColor.Red,
+                                        "ID inválido."
+                                    );
+                                }
+                            }
+
+                            break;
+                        }
+
+                    case 8:
                         UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "Volviendo al menu principal...");
                         break;
 
