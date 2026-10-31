@@ -18,6 +18,8 @@ namespace PlataformaStreaming
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion()) // reutilizar conexion de ConexionDB
             {
+                conexion.Open();
+
                 using (SqliteCommand comando = new SqliteCommand(sql, conexion))
                 {
                     comando.Parameters.AddWithValue("@tipo", "Pelicula"); // Parameters y AddWithValue son de Microsoft.Data.Sqlite -> tipo es el marcador de la consulta SQL y le asignamos el valor Película
@@ -70,6 +72,8 @@ namespace PlataformaStreaming
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
             {
+                conexion.Open();
+
                 using (SqliteTransaction transaccion = conexion.BeginTransaction()) // para poder manejar varias operaciones como una sola y que no valle en alguna tabla
                 {
                     try
@@ -144,6 +148,8 @@ namespace PlataformaStreaming
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
             {
+                conexion.Open();
+
                 using (SqliteTransaction transaccion = conexion.BeginTransaction())
                 {
                     try
@@ -250,6 +256,8 @@ namespace PlataformaStreaming
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
             {
+                conexion.Open();
+
                 using (SqliteTransaction transaccion = conexion.BeginTransaction())
                 {
                     try
@@ -339,6 +347,8 @@ namespace PlataformaStreaming
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
             {
+                conexion.Open();
+
                 using (SqliteTransaction transaccion = conexion.BeginTransaction())
                 {
                     try
@@ -421,6 +431,9 @@ namespace PlataformaStreaming
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
             {
+                conexion.Open();
+
+
                 using (SqliteCommand comando = new SqliteCommand(sql, conexion))
                 {
                     comando.Parameters.AddWithValue("@tipo", "Pelicula");
@@ -465,6 +478,8 @@ namespace PlataformaStreaming
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
             {
+                conexion.Open();
+
                 using (SqliteTransaction transaccion = conexion.BeginTransaction())
                 {
                     try
