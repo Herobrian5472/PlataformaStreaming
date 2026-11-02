@@ -1,9 +1,69 @@
-﻿using Microsoft.Data.Sqlite;
+using Microsoft.Data.Sqlite;
+using PlataformaStraming.Modelos;
 
 namespace PlataformaStreaming
 {
     internal class HistorialDAO
     {
+        public static List<Historial> ObtenerHistorial() {
+            List<Historial> logs = [];
+
+            string sql = @"
+                SELECT historial_id, contenido_id, operacion, fecha_hora, detalles, usuario_id
+                FROM Historial;
+                ";
+
+            using (SqliteConnection conexion = ConexionDB.ObtenerConexion()) {
+                conexion.Open();
+
+                using (SqliteCommand comando = new SqliteCommand(sql, conexion)) {
+                    using (SqliteDataReader lector = comando.ExecuteReader()) {
+
+                        while (lector.Read()) {
+                            Historial historial = new Historial {
+                                HistorialId = lector.GetInt32(0),
+                                ContenidoId = lector.IsDBNull(1) ? 0 : lector.GetInt32(1),
+                                Operacion = lector.GetString(2),
+                                FechaHora = lector.GetString(3),
+                                Detalles = lector.GetString(4),
+                                UsuarioId = lector.IsDBNull(5) ? 0 : lector.GetInt32(5)
+                            };
+
+                            logs.Add(historial);
+                        }
+                    }
+                }
+            }
+
+            if (logs.Count == 0) {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "Los registros del historial están vacíos.");
+            }
+
+            return logs;
+        }
+
+        public static void DescargarHistorial(List<Historial> historial) {
+            string Ruta = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "historial.txt"));
+
+            try {
+
+                if (!File.Exists(Ruta)) {
+                    File.Create(Ruta).Close();
+                }
+
+                List<string> lineas = [];
+
+                foreach (Historial h in historial) {
+                    lineas.Add($"{h.HistorialId} - {h.ContenidoId} - {h.Operacion} - {h.FechaHora} - {h.Detalles} - {h.UsuarioId}");
+                }
+                File.WriteAllLines(Ruta, lineas);
+
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Green, $"El historial se descargó correctamente en: {Ruta}");
+            } catch (Exception ex) {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Red, "Ocurrió un error inesperado, el historial no fue descargado.");
+            }
+        }
+                
         public void RegistrarMovimiento(
             SqliteConnection conexion,
             SqliteTransaction transaccion,
