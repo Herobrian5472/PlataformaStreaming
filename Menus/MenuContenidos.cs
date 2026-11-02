@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using static PlataformaStreaming.UtilidadesConsola;
 using PlataformaStreaming.Modelos;
@@ -9,7 +9,7 @@ namespace PlataformaStreaming
     internal class MenuContenidos
     {
         // atributo de la clase
-        private readonly Usuario usuario;
+        internal readonly Usuario usuario;
 
         //constructor de menú segun el usuario
         public MenuContenidos(Usuario usuario)
@@ -31,7 +31,7 @@ namespace PlataformaStreaming
             if (administrador)
             {
 
-                while (opcion != 8)
+                while (opcion != 9)
                 {
                     Console.WriteLine("\n--- MENU DE CONTENIDOS ---");
                     Console.WriteLine("1. Listar películas");
@@ -41,7 +41,8 @@ namespace PlataformaStreaming
                     Console.WriteLine("5. Dar de baja una película");
                     Console.WriteLine("6. Ver peliculas dadas de baja");
                     Console.WriteLine("7. Reactivar una pelicula");
-                    Console.WriteLine("8. Volver");
+                    Console.WriteLine("8. Descargar historial de movimientos");
+                    Console.WriteLine("9. Volver");
                     Console.Write("Seleccione una opcion: ");
 
                     if (!int.TryParse(Console.ReadLine(), out opcion)) // si no ingresa un número
@@ -391,6 +392,11 @@ namespace PlataformaStreaming
                             }
 
                         case 8:
+                            var historial = HistorialDAO.ObtenerHistorial();
+                            HistorialDAO.DescargarHistorial(historial);
+                            break;
+
+                        case 9:
                             UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "Volviendo al menu principal...");
                             break;
 
