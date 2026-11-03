@@ -35,6 +35,12 @@ namespace PlataformaStreaming
                 
                 // ============ INICIAR
 
+                // validar licencia
+                if (!ValidadorLicencia.Validar())
+                {
+                    return;
+                }
+
                 // inicializar la base de datos
                 ConexionDB.InicializarBaseDeDatos();
 
@@ -42,19 +48,22 @@ namespace PlataformaStreaming
                 UsuarioDAO usuarioDAO = new UsuarioDAO();
                 Autenticacion autenticacion = new Autenticacion(usuarioDAO);
 
-                // mostrar el menú de login
-                MenuLogIn menuLogin = new MenuLogIn(autenticacion);
-                Usuario? usuario = menuLogin.Mostrar();
-
-                // si se autenticó, ingresar al menú de contenidos
-                if (usuario != null)
+                while (true)
                 {
-                    Console.WriteLine(
-                        "\n¡Bienvenido " + usuario.NombreUsuario + "!"
-                    );
+                    // mostrar el menú de login
+                    MenuLogIn menuLogin = new MenuLogIn(autenticacion);
+                    Usuario? usuario = menuLogin.Mostrar();
 
-                    MenuContenidos menu = new MenuContenidos(usuario);
-                    menu.Mostrar();
+                    // si se autenticó, ingresar al menú de contenidos
+                    if (usuario != null)
+                    {
+                        Console.WriteLine(
+                            "\n¡Bienvenido " + usuario.NombreUsuario + "!"
+                        );
+
+                        MenuContenidos menu = new MenuContenidos(usuario);
+                        menu.Mostrar();
+                    }
                 }
                 
             }

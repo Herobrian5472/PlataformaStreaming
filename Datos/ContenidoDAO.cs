@@ -12,8 +12,7 @@ namespace PlataformaStreaming
             string sql = @"
                 SELECT contenido_id, titulo, descripcion, anio_lanzamiento, tipo, duracion
                 FROM Contenidos
-                WHERE tipo = @tipo
-                    AND estado = 1;
+                    WHERE estado = 1;
             ";
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion()) // reutilizar conexion de ConexionDB
@@ -22,7 +21,7 @@ namespace PlataformaStreaming
 
                 using (SqliteCommand comando = new SqliteCommand(sql, conexion))
                 {
-                    comando.Parameters.AddWithValue("@tipo", "Pelicula"); // Parameters y AddWithValue son de Microsoft.Data.Sqlite -> tipo es el marcador de la consulta SQL y le asignamos el valor Película
+                    // comando.Parameters.AddWithValue("@tipo", "Pelicula"); // Parameters y AddWithValue son de Microsoft.Data.Sqlite -> tipo es el marcador de la consulta SQL y le asignamos el valor Película
 
                     using (SqliteDataReader lector = comando.ExecuteReader()) // objeto lector de tipo SqliteDataReader (lee resultados del SELECT fila por fila)
                     {
@@ -65,9 +64,9 @@ namespace PlataformaStreaming
         {
             string sql = @"
                 INSERT INTO Contenidos
-                    (titulo, descripcion, anio_lanzamiento, tipo, duracion)
+                    (titulo, descripcion, anio_lanzamiento, tipo, estado, duracion)
                 VALUES
-                    (@titulo, @descripcion, @anio, @tipo, @duracion);
+                    (@titulo, @descripcion, @anio, @tipo, @estado, @duracion);
                 ";
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
@@ -87,6 +86,7 @@ namespace PlataformaStreaming
                             comando.Parameters.AddWithValue("@descripcion", contenido.Descripcion);
                             comando.Parameters.AddWithValue("@anio", contenido.AnioLanzamiento);
                             comando.Parameters.AddWithValue("@tipo", contenido.Tipo);
+                            comando.Parameters.AddWithValue("@estado", 1);
                             comando.Parameters.AddWithValue("@duracion", contenido.Duracion);
 
                             comando.ExecuteNonQuery(); // ejecuta el INSERT porque estamos guardando datos, no recuperando filas, Y GUARDA LA PELICULA
@@ -534,6 +534,7 @@ namespace PlataformaStreaming
                             comandoHistorial.ExecuteNonQuery();
                         }
 
+                        /*
                         // eliminar la relaciones con los géneros
                         string sqlGeneros = @"
                             DELETE FROM ContenidoGenero
@@ -548,6 +549,7 @@ namespace PlataformaStreaming
 
                             comandoGeneros.ExecuteNonQuery();
                         }
+                        */
 
                         // eliminar definitivamente el contenido
                         using (SqliteCommand comandoEliminar =

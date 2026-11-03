@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using static PlataformaStreaming.UtilidadesConsola;
 using PlataformaStreaming.Modelos;
 using PlataformaStreaming.Servicios;
+using System.ComponentModel.Design;
 
 namespace PlataformaStreaming
 {
@@ -41,8 +42,11 @@ namespace PlataformaStreaming
                     Console.WriteLine("5. Dar de baja una película");
                     Console.WriteLine("6. Ver peliculas dadas de baja");
                     Console.WriteLine("7. Reactivar una pelicula");
+                    Console.WriteLine();
                     Console.WriteLine("8. Descargar historial de movimientos");
-                    Console.WriteLine("9. Volver");
+                    Console.WriteLine("9. Otorgar 'Administrador' a un usuario");
+                    Console.WriteLine();
+                    Console.WriteLine("0. Cerrar sesión");
                     Console.Write("Seleccione una opcion: ");
 
                     if (!int.TryParse(Console.ReadLine(), out opcion)) // si no ingresa un número
@@ -60,10 +64,23 @@ namespace PlataformaStreaming
 
                                 foreach (Contenido pelicula in peliculas)
                                 {
+                                    string tiempo;
+
+                                    if (pelicula.Tipo == "Pelicula")
+                                    {
+                                        tiempo = " minutos";
+                                    }
+                                    else
+                                    {
+                                        tiempo = " capítulos";
+                                    }
                                     Console.WriteLine(
                                         pelicula.ContenidoId + " - " +
                                         pelicula.Titulo + " (" +
-                                        pelicula.AnioLanzamiento + ")");
+                                        pelicula.AnioLanzamiento + ") " +
+                                        pelicula.Tipo + " - " +
+                                        pelicula.Duracion +
+                                        tiempo + ".");
                                 }
 
                                 break;
@@ -75,39 +92,112 @@ namespace PlataformaStreaming
                                 Contenido nuevoContenido = new Contenido();
 
                                 // titulo
-                                Console.Write("Titulo: ");
-                                nuevoContenido.Titulo = Console.ReadLine();
-
-                                if (string.IsNullOrWhiteSpace(nuevoContenido.Titulo))
+                                while (true)
                                 {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El titulo no puede estar vacío.");
+                                    Console.Write("Titulo: ");
+                                    nuevoContenido.Titulo = Console.ReadLine() ?? ""; 
+
+                                    if (string.IsNullOrWhiteSpace(nuevoContenido.Titulo))
+                                    {
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El titulo no puede estar vacío.");
+                                        continue;
+                                    }
                                     break;
                                 }
 
                                 // descripcion
-                                Console.Write("Descripcion: ");
-                                nuevoContenido.Descripcion = Console.ReadLine();
+                                while (true)
+                                {
+                                    Console.Write("Descripción: ");
+                                    nuevoContenido.Descripcion = Console.ReadLine() ?? "";
+
+                                    if (string.IsNullOrWhiteSpace(nuevoContenido.Descripcion))
+                                    {
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El titulo no puede estar vacío.");
+                                        break;
+                                    }
+                                    break;
+                                }
 
                                 // año
-                                Console.Write("Año de lanzamiento: ");
-                                string entradaAnio = Console.ReadLine();
+                                int anio;
 
-                                if (!int.TryParse(entradaAnio, out int anio))
+                                while (true)
                                 {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un año valido.");
+                                    Console.Write("Año de lanzamiento: ");
+                                    string entradaAnio = Console.ReadLine() ?? "";
+
+                                    if (!int.TryParse(entradaAnio, out anio))
+                                    {
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un año valido.");
+                                        continue;
+                                    }
+                                    if (anio < 1900 || anio > DateTime.Now.Year)
+                                    {
+                                        MostrarTexto(ConsoleColor.DarkYellow, "El año está fuera del rango permitido.");
+                                        continue;
+                                    }
                                     break;
                                 }
 
                                 nuevoContenido.AnioLanzamiento = anio;
 
                                 // tipo
-                                nuevoContenido.Tipo = "Pelicula";
+                                while (true)
+                                {
+                                    Console.Write("\n1) Pelicula\n2) Serie\n");
+                                    string entradaTipo = Console.ReadLine() ?? "";
+
+                                    if (entradaTipo == "1" || entradaTipo == "2")
+                                    {
+                                        if (entradaTipo == "1")
+                                        {
+                                            nuevoContenido.Tipo = "Pelicula";
+                                        }
+                                        else
+                                        {
+                                            nuevoContenido.Tipo = "Serie";
+                                        }
+
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un número valido.");
+                                        continue;
+                                    }
+          
+                                }
+
+                                // duracion
+                                while (true)
+                                {
+                                    Console.Write("¿Cuánto dura?\n");
+                                    MostrarTexto(ConsoleColor.Cyan, "Si es Película son minutos, si es Serie son episodios.");
+                                    string entradaDuracion = Console.ReadLine() ?? "";
+
+                                    if (!int.TryParse(entradaDuracion, out int duracion))
+                                    {
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un número valido.");
+                                        continue;
+                                    }
+
+                                    if (duracion <= 0)
+                                    {
+                                        MostrarTexto(ConsoleColor.DarkYellow, "La duración debe ser mayor a cero.");
+                                        continue;
+                                    }
+                                    nuevoContenido.Duracion = duracion;
+
+                                    break;
+
+                                }
 
                                 // agregar pelicula
                                 contenidoDAO.AgregarContenido(nuevoContenido);
 
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine("Película guardada correctamente:");
+                                Console.WriteLine($"{nuevoContenido.Tipo} guardada correctamente:");
                                 Console.BackgroundColor = ConsoleColor.Gray;
                                 Console.ForegroundColor = ConsoleColor.Black;
                                 Console.WriteLine(
@@ -193,83 +283,113 @@ namespace PlataformaStreaming
 
                         case 4:
                             {
-                                List<Contenido> peliculas = contenidoDAO.ObtenerPeliculas();
-
-                                Console.WriteLine("ID de la película a eliminar: ");
-
-                                if (!int.TryParse(Console.ReadLine(), out int id))
+                                while (true)
                                 {
-                                    UtilidadesConsola.MostrarTexto(
-                                        ConsoleColor.Red,
-                                        "ID inválido."
-                                    );
-                                    break;
-                                }
+                                    List<Contenido> peliculas = contenidoDAO.ObtenerPeliculas();
 
-                                Contenido pelicula = null;
-
-                                foreach (Contenido p in peliculas)
-                                {
-                                    if (p.ContenidoId == id)
-                                    {
-                                        pelicula = p;
-                                        break;
-                                    }
-                                }
-                                if (pelicula == null)
-                                {
-                                    UtilidadesConsola.MostrarTexto(
-                                        ConsoleColor.Red,
-                                        "No existe una película con ese ID."
-                                        );
-                                    break;
-                                }
-
-                                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                                Console.WriteLine(
-                                    "Pelicula seleccionada: " +
-                                    pelicula.Titulo + " (" +
-                                    pelicula.AnioLanzamiento + ")"
-                                    );
-                                Console.ResetColor();
-
-                                UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "¿Seguro que desea eliminarla? (S/N): ");
-                                string confirmacion = Console.ReadLine();
-
-                                if (confirmacion != null && confirmacion.Trim().ToUpper() == "S")
-                                {
-                                    bool eliminado = contenidoDAO.EliminarContenido(id);
-
-                                    if (eliminado)
+                                    if (peliculas.Count == 0)
                                     {
                                         UtilidadesConsola.MostrarTexto(
-                                            ConsoleColor.Green,
-                                            "Película eliminada correctamente."
+                                            ConsoleColor.DarkYellow,
+                                            "No hay películas para eliminar."
                                             );
+                                        break;
                                     }
-                                    else
+
+                                    Console.WriteLine("ID de la película a eliminar: ");
+
+                                    if (!int.TryParse(Console.ReadLine(), out int id))
                                     {
                                         UtilidadesConsola.MostrarTexto(
                                             ConsoleColor.Red,
-                                            "No se pudo eliminar la película."
-                                            );
-                                    }
-                                }
-                                else
-                                {
-                                    UtilidadesConsola.MostrarTexto(
-                                        ConsoleColor.Yellow,
-                                        "Eliminacion cancenlada.\nDebe usar S para confirmar.\n"
-
+                                            "ID inválido."
                                         );
-                                }
+                                        continue;
+                                    }
 
+                                    Contenido pelicula = null;
+
+                                    foreach (Contenido p in peliculas)
+                                    {
+                                        if (p.ContenidoId == id)
+                                        {
+                                            pelicula = p;
+                                            break;
+                                        }
+                                    }
+                                    if (pelicula == null)
+                                    {
+                                        UtilidadesConsola.MostrarTexto(
+                                            ConsoleColor.Red,
+                                            "ID inválido."
+                                            );
+                                        continue;
+                                    }
+
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                                    Console.WriteLine(
+                                        "Pelicula seleccionada: " +
+                                        pelicula.Titulo + " (" +
+                                        pelicula.AnioLanzamiento + ")"
+                                        );
+                                    Console.ResetColor();
+
+                                    while (true)
+                                    {
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "¿Seguro que desea eliminarla? (S/N): ");
+                                        string confirmacion = (Console.ReadLine() ?? "").Trim().ToUpper();
+
+                                        if (confirmacion == "S")
+                                        {
+                                            bool eliminado = contenidoDAO.EliminarContenido(id);
+
+                                            if (eliminado)
+                                            {
+                                                UtilidadesConsola.MostrarTexto(
+                                                    ConsoleColor.Green,
+                                                    "Película eliminada correctamente."
+                                                    );
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                UtilidadesConsola.MostrarTexto(
+                                                    ConsoleColor.Red,
+                                                    "No se pudo eliminar la película."
+                                                    );
+                                                break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            UtilidadesConsola.MostrarTexto(
+                                                ConsoleColor.Yellow,
+                                                "Ingrese S para confirmar o N para cancelar.\n"
+                                            );
+
+                                            continue;
+                                        }
+                                    }
+
+                                    break;
+
+                                }
                                 break;
 
                             }
 
                         case 5:
                             {
+                                List<Contenido> peliculas = contenidoDAO.ObtenerPeliculas();
+
+                                if (peliculas.Count == 0)
+                                {
+                                    UtilidadesConsola.MostrarTexto(
+                                        ConsoleColor.DarkYellow,
+                                        "No hay películas para dar de Baja."
+                                        );
+                                    break;
+                                }
 
                                 Console.WriteLine("ID de la película que desea dar de baja: ");
 
@@ -397,8 +517,13 @@ namespace PlataformaStreaming
                             break;
 
                         case 9:
-                            UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "Volviendo al menu principal...");
+                            Console.WriteLine("Programando operación...");
                             break;
+
+
+                        case 0:
+                            UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "Cerrando sesión...");
+                            return;
 
                         default:
                             UtilidadesConsola.MostrarTexto(ConsoleColor.Red, "Opcion no válida.");
@@ -414,7 +539,8 @@ namespace PlataformaStreaming
                     Console.WriteLine("1. Listar películas");
                     Console.WriteLine("2. Agregar película");
                     Console.WriteLine("3. Modificar película");
-                    Console.WriteLine("4. Volver");
+                    Console.WriteLine();
+                    Console.WriteLine("4. Cerrar sesión");
                     Console.Write("Seleccione una opcion: ");
 
                     if (!int.TryParse(Console.ReadLine(), out opcion)) // si no ingresa un número
@@ -432,10 +558,23 @@ namespace PlataformaStreaming
 
                                 foreach (Contenido pelicula in peliculas)
                                 {
+                                    string tiempo;
+
+                                    if (pelicula.Tipo == "Pelicula")
+                                    {
+                                        tiempo = " minutos";
+                                    }
+                                    else
+                                    {
+                                        tiempo = " capítulos";
+                                    }
                                     Console.WriteLine(
                                         pelicula.ContenidoId + " - " +
                                         pelicula.Titulo + " (" +
-                                        pelicula.AnioLanzamiento + ")");
+                                        pelicula.AnioLanzamiento + ") " +
+                                        pelicula.Tipo + " - " +
+                                        pelicula.Duracion +
+                                        tiempo + ".");
                                 }
 
                                 break;
@@ -447,39 +586,112 @@ namespace PlataformaStreaming
                                 Contenido nuevoContenido = new Contenido();
 
                                 // titulo
-                                Console.Write("Titulo: ");
-                                nuevoContenido.Titulo = Console.ReadLine();
-
-                                if (string.IsNullOrWhiteSpace(nuevoContenido.Titulo))
+                                while (true)
                                 {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El titulo no puede estar vacío.");
+                                    Console.Write("Titulo: ");
+                                    nuevoContenido.Titulo = Console.ReadLine() ?? "";
+
+                                    if (string.IsNullOrWhiteSpace(nuevoContenido.Titulo))
+                                    {
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El titulo no puede estar vacío.");
+                                        continue;
+                                    }
                                     break;
                                 }
 
                                 // descripcion
-                                Console.Write("Descripcion: ");
-                                nuevoContenido.Descripcion = Console.ReadLine();
+                                while (true)
+                                {
+                                    Console.Write("Descripción: ");
+                                    nuevoContenido.Descripcion = Console.ReadLine() ?? "";
+
+                                    if (string.IsNullOrWhiteSpace(nuevoContenido.Descripcion))
+                                    {
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El titulo no puede estar vacío.");
+                                        break;
+                                    }
+                                    break;
+                                }
 
                                 // año
-                                Console.Write("Año de lanzamiento: ");
-                                string entradaAnio = Console.ReadLine();
+                                int anio;
 
-                                if (!int.TryParse(entradaAnio, out int anio))
+                                while (true)
                                 {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un año valido.");
+                                    Console.Write("Año de lanzamiento: ");
+                                    string entradaAnio = Console.ReadLine() ?? "";
+
+                                    if (!int.TryParse(entradaAnio, out anio))
+                                    {
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un año valido.");
+                                        continue;
+                                    }
+                                    if (anio < 1900 || anio > DateTime.Now.Year)
+                                    {
+                                        MostrarTexto(ConsoleColor.DarkYellow, "El año está fuera del rango permitido.");
+                                        continue;
+                                    }
                                     break;
                                 }
 
                                 nuevoContenido.AnioLanzamiento = anio;
 
                                 // tipo
-                                nuevoContenido.Tipo = "Pelicula";
+                                while (true)
+                                {
+                                    Console.Write("\n1) Pelicula\n2) Serie\n");
+                                    string entradaTipo = Console.ReadLine() ?? "";
+
+                                    if (entradaTipo == "1" || entradaTipo == "2")
+                                    {
+                                        if (entradaTipo == "1")
+                                        {
+                                            nuevoContenido.Tipo = "Pelicula";
+                                        }
+                                        else
+                                        {
+                                            nuevoContenido.Tipo = "Serie";
+                                        }
+
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un número valido.");
+                                        continue;
+                                    }
+
+                                }
+
+                                // duracion
+                                while (true)
+                                {
+                                    Console.Write("¿Cuánto dura?\n");
+                                    MostrarTexto(ConsoleColor.Cyan, "Si es Película son minutos, si es Serie son episodios.");
+                                    string entradaDuracion = Console.ReadLine() ?? "";
+
+                                    if (!int.TryParse(entradaDuracion, out int duracion))
+                                    {
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un número valido.");
+                                        continue;
+                                    }
+
+                                    if (duracion <= 0)
+                                    {
+                                        MostrarTexto(ConsoleColor.DarkYellow, "La duración debe ser mayor a cero.");
+                                        continue;
+                                    }
+                                    nuevoContenido.Duracion = duracion;
+
+                                    break;
+
+                                }
 
                                 // agregar pelicula
                                 contenidoDAO.AgregarContenido(nuevoContenido);
 
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine("Película guardada correctamente:");
+                                Console.WriteLine($"{nuevoContenido.Tipo} guardada correctamente:");
                                 Console.BackgroundColor = ConsoleColor.Gray;
                                 Console.ForegroundColor = ConsoleColor.Black;
                                 Console.WriteLine(
@@ -562,10 +774,10 @@ namespace PlataformaStreaming
                                 break;
 
                             }
-                  
+
                         case 4:
-                            UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "Volviendo al menu principal...");
-                            break;
+                            UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "Cerrando sesión...");
+                            return;
 
                         default:
                             UtilidadesConsola.MostrarTexto(ConsoleColor.Red, "Opcion no válida.");

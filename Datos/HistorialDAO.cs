@@ -43,7 +43,7 @@ namespace PlataformaStreaming
         }
 
         public static void DescargarHistorial(List<Historial> historial) {
-            string Ruta = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "historial.txt"));
+            string Ruta = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "Archivos", "historial.txt"));
 
             try {
 
@@ -53,9 +53,36 @@ namespace PlataformaStreaming
 
                 List<string> lineas = [];
 
+                lineas.Add("================================================================================");
+                lineas.Add("                       HISTORIAL - PLATAFORMA STREAMING");
+                lineas.Add("================================================================================");
+                lineas.Add("");
+
+                lineas.Add(
+                    "ID".PadRight(6) +
+                    "CONTENIDO".PadRight(12) +
+                    "OPERACION".PadRight(18) +
+                    "FECHA Y HORA".PadRight(23) +
+                    "DETALLES"
+                );
+
+                lineas.Add(new string('-', 110));
+
                 foreach (Historial h in historial) {
-                    lineas.Add($"{h.HistorialId} - {h.ContenidoId} - {h.Operacion} - {h.FechaHora} - {h.Detalles} - {h.UsuarioId}");
+                    lineas.Add(
+                        h.HistorialId.ToString().PadRight(6) +
+                        h.ContenidoId.ToString().PadRight(12) +
+                        h.Operacion.ToString().PadRight(18) +
+                        h.FechaHora.ToString().PadRight(23) +
+                        h.Detalles +
+                        " | Usuario: " + h.UsuarioId
+                    );
+
+                    lineas.Add("");
                 }
+
+                lineas.Add("================================================================================");
+
                 File.WriteAllLines(Ruta, lineas);
 
                 UtilidadesConsola.MostrarTexto(ConsoleColor.Green, $"El historial se descargó correctamente en: {Ruta}");

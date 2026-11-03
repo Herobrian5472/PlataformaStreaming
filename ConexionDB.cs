@@ -30,6 +30,7 @@ namespace PlataformaStreaming // mantiene la clase dentro del espacio de nombres
             {
                 conexion.Open();
 
+                // TABLA USUARIOS
                 string consultaUsuarios = @"
                     CREATE TABLE IF NOT EXISTS Usuarios
                     (
@@ -51,12 +52,7 @@ namespace PlataformaStreaming // mantiene la clase dentro del espacio de nombres
                     comando.ExecuteNonQuery();
                 }
 
-                // hay que hacer lo mismo que ella pero con las tablas Contenido e Historial, por si el profe borra streamind.db
-            }
-
-            using (SqliteConnection conexion = ObtenerConexion()) {
-                conexion.Open();
-
+                // TABLA CONTENIDOS
                 string consultaContenidos = @"
                     CREATE TABLE IF NOT EXISTS Contenidos
                     (
@@ -69,13 +65,12 @@ namespace PlataformaStreaming // mantiene la clase dentro del espacio de nombres
                         duracion INTEGER NOT NULL
                     );";
 
-                using (SqliteCommand comando = new SqliteCommand(consultaContenidos, conexion)) {
+                using (SqliteCommand comando = new SqliteCommand(consultaContenidos, conexion))
+                {
                     comando.ExecuteNonQuery();
                 }
-            }
 
-            using (SqliteConnection conexion = ObtenerConexion()) {
-                conexion.Open();
+                // TABLA HISTORIAL
 
                 string consultaHistorial = @"
                     CREATE TABLE IF NOT EXISTS Historial
@@ -90,10 +85,14 @@ namespace PlataformaStreaming // mantiene la clase dentro del espacio de nombres
                         FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id)
                     );";
 
-                using (SqliteCommand comando = new SqliteCommand(consultaHistorial, conexion)) {
+                using (SqliteCommand comando = new SqliteCommand(consultaHistorial, conexion))
+                {
                     comando.ExecuteNonQuery();
                 }
+
+                // hay que hacer lo mismo que ella pero con las tablas Contenido e Historial, por si el profe borra streamind.db
             }
+
             // Verificar si existe el usuario ADMINISTRADOR:
 
             UsuarioDAO usuarioDAO = new();
