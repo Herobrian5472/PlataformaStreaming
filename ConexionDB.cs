@@ -1,4 +1,6 @@
-﻿using Microsoft.Data.Sqlite;  // permite usar la clase SQLite instalada con NuGet
+using Microsoft.Data.Sqlite;  // permite usar la clase SQLite instalada con NuGet
+using PlataformaStreaming.Datos;
+using PlataformaStreaming.Servicios;
 using System.IO;
 
 namespace PlataformaStreaming // mantiene la clase dentro del espacio de nombres del proyecto
@@ -51,6 +53,69 @@ namespace PlataformaStreaming // mantiene la clase dentro del espacio de nombres
 
                 // hay que hacer lo mismo que ella pero con las tablas Contenido e Historial, por si el profe borra streamind.db
             }
+
+            using (SqliteConnection conexion = ObtenerConexion()) {
+                conexion.Open();
+
+                string consultaContenidos = @"
+                    CREATE TABLE IF NOT EXISTS Contenidos
+                    (
+                        contenido_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        titulo TEXT NOT NULL,
+                        descripcion TEXT,
+                        anio_lanzamiento INTEGER,
+                        tipo TEXT NOT NULL,
+                        estado INTEGER NOT NULL,
+                        duracion INTEGER NOT NULL
+                    );";
+
+                using (SqliteCommand comando = new SqliteCommand(consultaContenidos, conexion)) {
+                    comando.ExecuteNonQuery();
+                }
+            }
+
+            using (SqliteConnection conexion = ObtenerConexion()) {
+                conexion.Open();
+
+                string consultaHistorial = @"
+                    CREATE TABLE IF NOT EXISTS Historial
+                    (
+                        historial_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        contenido_id INTEGER,
+                        operacion TEXT NOT NULL,
+                        fecha_hora TIME NOT NULL DEFAULT (datetime('now', 'localtime')),
+                        detalles TEXT,
+                        usuario_id INTEGER,
+                        FOREIGN KEY (contenido_id) REFERENCES Contenidos(contenido_id),
+                        FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id)
+                    );";
+
+                using (SqliteCommand comando = new SqliteCommand(consultaHistorial, conexion)) {
+                    comando.ExecuteNonQuery();
+                }
+            }
+            // Verificar si existe el usuario ADMINISTRADOR:
+
+            UsuarioDAO usuarioDAO = new();
+
+            if (!usuarioDAO.ExisteUsuario("ADMINISTRADOR")) {
+
+                using (SqliteConnection conexion = ObtenerConexion()) {
+                    conexion.Open();
+
+                    Autenticacion autenticacion = new(usuarioDAO);
+
+                    autenticacion.Registrar(
+                        "Administrador",
+                        "Administrador",
+                        "ADMINISTRADOR",
+                        "administrador@admin.com",
+                        "Admin123");
+
+                    usuarioDAO.CambiarRol("ADMINISTRADOR", "Administrador");
+                }
+            }
+
         }
     }
 }
