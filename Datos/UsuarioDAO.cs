@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.Data.Sqlite;
+using PlataformaStraming.Interfaces;
 using PlataformaStreaming.Modelos;
 
 namespace PlataformaStreaming.Datos
 {
-    public class UsuarioDAO
+    public class UsuarioDAO : IUsuarioDAO
     {
         private readonly ConexionDB ConexionDB;
 

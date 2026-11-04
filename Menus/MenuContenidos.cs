@@ -25,23 +25,24 @@ namespace PlataformaStreaming
             Autorizacion autorizacion = new Autorizacion();
             bool administrador = autorizacion.EsAdministrador(usuario);
 
-            ContenidoDAO contenidoDAO = new ContenidoDAO(); 
+            ContenidoDAO contenidoDAO = new ContenidoDAO();
+            
 
-            int opcion = 0;
+            int opcion = 10;
 
             if (administrador)
             {
 
-                while (opcion != 9)
+                while (opcion != 0)
                 {
                     Console.WriteLine("\n--- MENU DE CONTENIDOS ---");
-                    Console.WriteLine("1. Listar películas");
-                    Console.WriteLine("2. Agregar película");
-                    Console.WriteLine("3. Modificar película");
-                    Console.WriteLine("4. Eliminar película");
-                    Console.WriteLine("5. Dar de baja una película");
-                    Console.WriteLine("6. Ver peliculas dadas de baja");
-                    Console.WriteLine("7. Reactivar una pelicula");
+                    Console.WriteLine("1. Listar contenidos");
+                    Console.WriteLine("2. Agregar contenido");
+                    Console.WriteLine("3. Modificar contenido");
+                    Console.WriteLine("4. Eliminar contenido");
+                    Console.WriteLine("5. Dar contenido de baja");
+                    Console.WriteLine("6. Ver contenidos dados de baja");
+                    Console.WriteLine("7. Reactivar contenido");
                     Console.WriteLine();
                     Console.WriteLine("8. Descargar historial de movimientos");
                     Console.WriteLine("9. Otorgar 'Administrador' a un usuario");
@@ -211,9 +212,9 @@ namespace PlataformaStreaming
 
                         case 3:
                             {
-                                List<Contenido> peliculas = contenidoDAO.ObtenerPeliculas(); // obtener peliculas antes de modificar
+                                List<Contenido> contenidos = contenidoDAO.ObtenerPeliculas(); // obtener peliculas antes de modificar
 
-                                Console.WriteLine("ID de la película a modificar: ");
+                                Console.WriteLine("ID del contenido a modificar: ");
 
                                 if (!int.TryParse(Console.ReadLine(), out int id))
                                 {
@@ -221,60 +222,60 @@ namespace PlataformaStreaming
                                     break;
                                 }
 
-                                Contenido pelicula = null; // creamos el objeto sin ninguna pelicula seleccionada
+                                Contenido contenido = null; // creamos el objeto sin ninguna pelicula seleccionada
 
-                                foreach (Contenido p in peliculas)
+                                foreach (Contenido p in contenidos)
                                 {
                                     if (p.ContenidoId == id) // comparamos el id de cada pelicula con lo que ingresó el usuario
                                     {
-                                        pelicula = p; // si el id existe se lo asignamos a pelicula
+                                        contenido = p; // si el id existe se lo asignamos a pelicula
                                         break;
                                     }
                                 }
 
-                                if (pelicula == null)
+                                if (contenido == null)
                                 {
                                     UtilidadesConsola.MostrarTexto(
                                         ConsoleColor.Red,
-                                        "No existe una película con ese ID."
+                                        "No existe un contenido con ese ID."
                                     );
 
                                     break;
                                 }
 
-                                pelicula.ContenidoId = id;
+                                contenido.ContenidoId = id;
 
-                                Console.Write("Nuevo titulo: ");
-                                pelicula.Titulo = Console.ReadLine();
+                                Console.Write("Nuevo título: ");
+                                contenido.Titulo = Console.ReadLine();
 
-                                if (string.IsNullOrWhiteSpace(pelicula.Titulo))
+                                if (string.IsNullOrWhiteSpace(contenido.Titulo))
                                 {
                                     UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El título no puede estar vacío.");
                                     break;
                                 }
 
-                                Console.WriteLine("Nueva descripcion: ");
-                                pelicula.Descripcion = Console.ReadLine();
+                                Console.WriteLine("Nueva descripción: ");
+                                contenido.Descripcion = Console.ReadLine();
 
                                 Console.Write("Nuevo año: ");
 
                                 if (!int.TryParse(Console.ReadLine(), out int anio))
                                 {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Año invalido.");
+                                    UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Año inválido.");
                                     break;
                                 }
 
-                                pelicula.AnioLanzamiento = anio;
+                                contenido.AnioLanzamiento = anio;
 
-                                bool modificado = contenidoDAO.ModificarContenido(pelicula);
+                                bool modificado = contenidoDAO.ModificarContenido(contenido);
 
                                 if (modificado)
                                 {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.Green, "Película modificada correctamente.");
+                                    UtilidadesConsola.MostrarTexto(ConsoleColor.Green, "Contenido modificado correctamente.");
                                 }
                                 else
                                 {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.Red, "No se pudo modificar la película.");
+                                    UtilidadesConsola.MostrarTexto(ConsoleColor.Red, "No se pudo modificar el contenido.");
                                 }
 
                                 break;
@@ -291,12 +292,12 @@ namespace PlataformaStreaming
                                     {
                                         UtilidadesConsola.MostrarTexto(
                                             ConsoleColor.DarkYellow,
-                                            "No hay películas para eliminar."
+                                            "No hay contenidos para eliminar."
                                             );
                                         break;
                                     }
 
-                                    Console.WriteLine("ID de la película a eliminar: ");
+                                    Console.WriteLine("ID del contenido a eliminar: ");
 
                                     if (!int.TryParse(Console.ReadLine(), out int id))
                                     {
@@ -328,7 +329,7 @@ namespace PlataformaStreaming
 
                                     Console.ForegroundColor = ConsoleColor.DarkYellow;
                                     Console.WriteLine(
-                                        "Pelicula seleccionada: " +
+                                        "Contenido seleccionado: " +
                                         pelicula.Titulo + " (" +
                                         pelicula.AnioLanzamiento + ")"
                                         );
@@ -336,7 +337,7 @@ namespace PlataformaStreaming
 
                                     while (true)
                                     {
-                                        UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "¿Seguro que desea eliminarla? (S/N): ");
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "¿Seguro que desea eliminarlo? (S/N): ");
                                         string confirmacion = (Console.ReadLine() ?? "").Trim().ToUpper();
 
                                         if (confirmacion == "S")
@@ -347,7 +348,7 @@ namespace PlataformaStreaming
                                             {
                                                 UtilidadesConsola.MostrarTexto(
                                                     ConsoleColor.Green,
-                                                    "Película eliminada correctamente."
+                                                    "Contenido eliminado correctamente."
                                                     );
                                                 break;
                                             }
@@ -355,7 +356,7 @@ namespace PlataformaStreaming
                                             {
                                                 UtilidadesConsola.MostrarTexto(
                                                     ConsoleColor.Red,
-                                                    "No se pudo eliminar la película."
+                                                    "No se pudo eliminar el contenido."
                                                     );
                                                 break;
                                             }
@@ -380,18 +381,18 @@ namespace PlataformaStreaming
 
                         case 5:
                             {
-                                List<Contenido> peliculas = contenidoDAO.ObtenerPeliculas();
+                                List<Contenido> contenidos = contenidoDAO.ObtenerPeliculas();
 
-                                if (peliculas.Count == 0)
+                                if (contenidos.Count == 0)
                                 {
                                     UtilidadesConsola.MostrarTexto(
                                         ConsoleColor.DarkYellow,
-                                        "No hay películas para dar de Baja."
+                                        "No hay contenidos para dar de baja."
                                         );
                                     break;
                                 }
 
-                                Console.WriteLine("ID de la película que desea dar de baja: ");
+                                Console.WriteLine("ID del contenido que desea dar de baja: ");
 
                                 if (!int.TryParse(Console.ReadLine(), out int id))
                                 {
@@ -428,14 +429,14 @@ namespace PlataformaStreaming
                                 {
                                     UtilidadesConsola.MostrarTexto(
                                         ConsoleColor.Yellow,
-                                        "No hay películas dadas de baja."
+                                        "No hay contenidos dados de baja."
                                     );
                                 }
                                 else
                                 {
                                     UtilidadesConsola.MostrarTexto(
                                         ConsoleColor.Yellow,
-                                        "--- PELICULAS DADAS DE BAJA ---"
+                                        "--- CONTENIDOS DADOS DE BAJA ---"
                                         );
 
                                     foreach (Contenido pelicula in peliculasBajas)
@@ -453,32 +454,32 @@ namespace PlataformaStreaming
 
                         case 7:
                             {
-                                List<Contenido> peliculasBajas = contenidoDAO.MostrarBajas();
+                                List<Contenido> contenidosBajas = contenidoDAO.MostrarBajas();
 
-                                if (peliculasBajas.Count == 0)
+                                if (contenidosBajas.Count == 0)
                                 {
                                     MostrarTexto(
                                         ConsoleColor.Yellow,
-                                        "No hay películas dadas de baja."
+                                        "No hay contenidos dados de baja."
                                     );
                                 }
                                 else
                                 {
                                     MostrarTexto(
                                         ConsoleColor.Yellow,
-                                        "--- PELICULAS PARA REACTIVAR---"
+                                        "--- CONTENIDOS PARA REACTIVAR---"
                                     );
 
-                                    foreach (Contenido pelicula in peliculasBajas)
+                                    foreach (Contenido contenido in contenidosBajas)
                                     {
                                         Console.WriteLine(
-                                            pelicula.ContenidoId + " - " +
-                                            pelicula.Titulo + " (" +
-                                            pelicula.AnioLanzamiento + ")"
+                                            contenido.ContenidoId + " - " +
+                                            contenido.Titulo + " (" +
+                                            contenido.AnioLanzamiento + ")"
                                         );
                                     }
 
-                                    Console.WriteLine("\nID de la película a reactivar: ");
+                                    Console.WriteLine("\nID del contenido a reactivar: ");
 
                                     if (int.TryParse(Console.ReadLine(), out int id))
                                     {
@@ -488,14 +489,14 @@ namespace PlataformaStreaming
                                         {
                                             MostrarTexto(
                                                 ConsoleColor.Green,
-                                                "Película reactivada correctamente."
+                                                "contenido reactivado correctamente."
                                             );
                                         }
                                         else
                                         {
                                             MostrarTexto(
                                                 ConsoleColor.Red,
-                                                "No se encontró una película dada de baja con ese ID."
+                                                "No se encontró un contenido dado de baja con ese ID."
                                             );
                                         }
                                     }
@@ -512,8 +513,10 @@ namespace PlataformaStreaming
                             }
 
                         case 8:
-                            var historial = HistorialDAO.ObtenerHistorial();
-                            HistorialDAO.DescargarHistorial(historial);
+                            HistorialDAO historialDAO = new HistorialDAO();
+
+                            var historial = historialDAO.ObtenerHistorial();
+                            historialDAO.DescargarHistorial(historial);
                             break;
 
                         case 9:
@@ -536,12 +539,12 @@ namespace PlataformaStreaming
                 while (opcion != 4)
                 {
                     Console.WriteLine("\n--- MENU DE CONTENIDOS ---");
-                    Console.WriteLine("1. Listar películas");
-                    Console.WriteLine("2. Agregar película");
-                    Console.WriteLine("3. Modificar película");
+                    Console.WriteLine("1. Listar contenidos");
+                    Console.WriteLine("2. Agregar contenido");
+                    Console.WriteLine("3. Modificar contenido");
                     Console.WriteLine();
                     Console.WriteLine("4. Cerrar sesión");
-                    Console.Write("Seleccione una opcion: ");
+                    Console.Write("Seleccione una opción: ");
 
                     if (!int.TryParse(Console.ReadLine(), out opcion)) // si no ingresa un número
                     {
@@ -554,13 +557,13 @@ namespace PlataformaStreaming
                     {
                         case 1:
                             {
-                                List<Contenido> peliculas = contenidoDAO.ObtenerPeliculas();
+                                List<Contenido> contenidos = contenidoDAO.ObtenerPeliculas();
 
-                                foreach (Contenido pelicula in peliculas)
+                                foreach (Contenido contenido in contenidos)
                                 {
                                     string tiempo;
 
-                                    if (pelicula.Tipo == "Pelicula")
+                                    if (contenido.Tipo == "Pelicula")
                                     {
                                         tiempo = " minutos";
                                     }
@@ -569,11 +572,11 @@ namespace PlataformaStreaming
                                         tiempo = " capítulos";
                                     }
                                     Console.WriteLine(
-                                        pelicula.ContenidoId + " - " +
-                                        pelicula.Titulo + " (" +
-                                        pelicula.AnioLanzamiento + ") " +
-                                        pelicula.Tipo + " - " +
-                                        pelicula.Duracion +
+                                        contenido.ContenidoId + " - " +
+                                        contenido.Titulo + " (" +
+                                        contenido.AnioLanzamiento + ") " +
+                                        contenido.Tipo + " - " +
+                                        contenido.Duracion +
                                         tiempo + ".");
                                 }
 

@@ -1,11 +1,12 @@
 using Microsoft.Data.Sqlite;
+using PlataformaStraming.Interfaces;
 using PlataformaStraming.Modelos;
 
 namespace PlataformaStreaming
 {
-    internal class HistorialDAO
+    internal class HistorialDAO : IHistorialDAO
     {
-        public static List<Historial> ObtenerHistorial() {
+        public List<Historial> ObtenerHistorial() {
             List<Historial> logs = [];
 
             string sql = @"
@@ -42,7 +43,7 @@ namespace PlataformaStreaming
             return logs;
         }
 
-        public static void DescargarHistorial(List<Historial> historial) {
+        public void DescargarHistorial(List<Historial> historial) {
             string Ruta = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "Archivos", "historial.txt"));
 
             try {

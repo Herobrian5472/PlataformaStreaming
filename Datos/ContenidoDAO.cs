@@ -1,9 +1,10 @@
 ﻿using Microsoft.Data.Sqlite;
+using PlataformaStraming.Interfaces;
 using System.Collections.Generic;
 
 namespace PlataformaStreaming
 {
-    internal class ContenidoDAO
+    internal class ContenidoDAO : IContenidoDAO
     {
         public List<Contenido> ObtenerPeliculas() // lista de objetos 'Contenido'
         {
@@ -241,7 +242,6 @@ namespace PlataformaStreaming
                 SELECT titulo
                 FROM Contenidos
                 WHERE contenido_id = @id
-                    AND tipo = @tipo
                     AND estado = 1;
             ";
 
@@ -249,7 +249,6 @@ namespace PlataformaStreaming
                 UPDATE Contenidos
                 SET estado = 0
                 WHERE contenido_id = @id
-                    AND tipo = @tipo
                     AND estado = 1;
             ";
 
@@ -271,7 +270,6 @@ namespace PlataformaStreaming
                             comandoTitulo.Transaction = transaccion;
 
                             comandoTitulo.Parameters.AddWithValue("@id", id);
-                            comandoTitulo.Parameters.AddWithValue("@tipo", "Pelicula");
 
                             object resultado = comandoTitulo.ExecuteScalar();
 
@@ -332,7 +330,6 @@ namespace PlataformaStreaming
                 SELECT titulo
                 FROM Contenidos
                 WHERE contenido_id = @id
-                    AND tipo = @tipo
                     AND estado = 0;
             ";
 
@@ -340,7 +337,6 @@ namespace PlataformaStreaming
                 UPDATE Contenidos
                 SET estado = 1
                 WHERE contenido_id = @id
-                    AND tipo = @tipo
                     AND estado = 0;
             ";
 
@@ -362,7 +358,6 @@ namespace PlataformaStreaming
                             comandoTitulo.Transaction = transaccion;
 
                             comandoTitulo.Parameters.AddWithValue("@id", id);
-                            comandoTitulo.Parameters.AddWithValue("@tipo", "Pelicula");
 
                             object resultado = comandoTitulo.ExecuteScalar(); // ExecuteScalar busca un valor o null
 
@@ -425,8 +420,7 @@ namespace PlataformaStreaming
                 SELECT contenido_id, titulo, descripcion,
                     anio_lanzamiento, tipo, duracion
                 FROM Contenidos
-                WHERE tipo = @tipo
-                    AND estado = 0;
+                WHERE estado = 0;
             ";
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
@@ -436,7 +430,6 @@ namespace PlataformaStreaming
 
                 using (SqliteCommand comando = new SqliteCommand(sql, conexion))
                 {
-                    comando.Parameters.AddWithValue("@tipo", "Pelicula");
 
                     using (SqliteDataReader lector = comando.ExecuteReader())
                     {
