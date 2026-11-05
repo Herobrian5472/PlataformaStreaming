@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Data.Sqlite;
-using PlataformaStraming.Interfaces;
+using PlataformaStreaming.Interfaces;
 using PlataformaStreaming.Modelos;
 
 namespace PlataformaStreaming.Datos
@@ -165,6 +165,64 @@ namespace PlataformaStreaming.Datos
 
             return null;
         }
+
+        // Devuelve los usuarios que tienen el rol indicado, sin recuperar
+        // información de autenticación como hash o salt.
+        public List<Usuario> ObtenerUsuariosPorRol(string rol)
+        {
+            List<Usuario> usuarios = new List<Usuario>();
+
+            using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
+            {
+                conexion.Open();
+
+                string consulta = @"
+                    SELECT usuario_id, Nombre, Apellido, NombreUsuario, Email,
+                           Rol, FechaRegistro, SuscripcionActiva
+                    FROM Usuarios
+                    WHERE Rol = $rol
+                    ORDER BY NombreUsuario COLLATE NOCASE;";
+
+                using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("$rol", rol);
+
+                    using (SqliteDataReader lector = comando.ExecuteReader())
+                    {
+                        while (lector.Read())
+                        {
+                            usuarios.Add(new Usuario
+                            {
+                                UsuarioId = lector.GetInt32(0),
+                                Nombre = lector.GetString(1),
+                                Apellido = lector.GetString(2),
+                                NombreUsuario = lector.GetString(3),
+                                Email = lector.GetString(4),
+                                Rol = lector.GetString(5),
+                                FechaRegistro = DateTime.Parse(lector.GetString(6)),
+                                SuscripcionActiva = lector.GetInt32(7) == 1
+                            });
+                        }
+                    }
+                }
+            }
+
+            return usuarios;
+        }
+
+        public int ContarAdministradores()
+        {
+            using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
+            {
+                conexion.Open();
+                using (SqliteCommand comando = new SqliteCommand(
+                    "SELECT COUNT(*) FROM Usuarios WHERE Rol = 'Administrador';", conexion))
+                {
+                    return Convert.ToInt32(comando.ExecuteScalar());
+                }
+            }
+        }
+
 
         //Este método se ha utilizado para lograr modificar el rol del administrador.
         public bool CambiarRol(string nombreUsuario, string nuevoRol)

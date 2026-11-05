@@ -1,4 +1,4 @@
-namespace PlataformaStraming.Modelos {
+namespace PlataformaStreaming.Modelos {
     internal class Historial {
         public int HistorialId { get; set; }
         public int? ContenidoId { get; set; }

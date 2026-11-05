@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
-using PlataformaStraming.Modelos;
+using PlataformaStreaming.Modelos;
 
-namespace PlataformaStraming.Interfaces {
+namespace PlataformaStreaming.Interfaces {
     internal interface IHistorialDAO {
         public List<Historial> ObtenerHistorial();
         public void DescargarHistorial(List<Historial> historial);

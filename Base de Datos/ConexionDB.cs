@@ -13,7 +13,7 @@ namespace PlataformaStreaming // mantiene la clase dentro del espacio de nombres
                 Path.Combine(
                     AppContext.BaseDirectory,
                     "..", "..", "..",
-                    "streaming.db"
+                    "Base de Datos" , "streaming.db"
                 )
             );
 

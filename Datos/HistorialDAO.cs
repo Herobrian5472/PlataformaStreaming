@@ -1,6 +1,6 @@
 using Microsoft.Data.Sqlite;
-using PlataformaStraming.Interfaces;
-using PlataformaStraming.Modelos;
+using PlataformaStreaming.Interfaces;
+using PlataformaStreaming.Modelos;
 
 namespace PlataformaStreaming
 {

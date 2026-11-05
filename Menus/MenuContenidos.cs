@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using static PlataformaStreaming.UtilidadesConsola;
 using PlataformaStreaming.Modelos;
 using PlataformaStreaming.Servicios;
+using PlataformaStreaming.Datos;
+using PlataformaStreaming.Metodos;
 using System.ComponentModel.Design;
 
 namespace PlataformaStreaming
@@ -26,9 +28,8 @@ namespace PlataformaStreaming
             bool administrador = autorizacion.EsAdministrador(usuario);
 
             ContenidoDAO contenidoDAO = new ContenidoDAO();
-            
 
-            int opcion = 10;
+            int opcion = 12;
 
             if (administrador)
             {
@@ -36,18 +37,21 @@ namespace PlataformaStreaming
                 while (opcion != 0)
                 {
                     Console.WriteLine("\n--- MENU DE CONTENIDOS ---");
-                    Console.WriteLine("1. Listar contenidos");
-                    Console.WriteLine("2. Agregar contenido");
-                    Console.WriteLine("3. Modificar contenido");
+                    Console.WriteLine("1. Listar películas");
+                    Console.WriteLine("2. Listar series");
+                    Console.WriteLine("3. Agregar contenido");
+                    Console.WriteLine("4. Modificar contenido");
                     Console.WriteLine("4. Eliminar contenido");
-                    Console.WriteLine("5. Dar contenido de baja");
-                    Console.WriteLine("6. Ver contenidos dados de baja");
-                    Console.WriteLine("7. Reactivar contenido");
+                    Console.WriteLine("6. Dar contenido de baja");
+                    Console.WriteLine("7. Ver contenidos dados de baja");
+                    Console.WriteLine("8. Reactivar contenido");
                     Console.WriteLine();
-                    Console.WriteLine("8. Descargar historial de movimientos");
-                    Console.WriteLine("9. Otorgar 'Administrador' a un usuario");
+                    Console.WriteLine("9. Descargar historial de movimientos");
+                    Console.WriteLine("10. Otorgar 'Administrador' a un usuario");
+                    Console.WriteLine("11. Quitar privilegio de administrador");
                     Console.WriteLine();
                     Console.WriteLine("0. Cerrar sesión");
+                    Console.WriteLine();
                     Console.Write("Seleccione una opcion: ");
 
                     if (!int.TryParse(Console.ReadLine(), out opcion)) // si no ingresa un número
@@ -61,156 +65,22 @@ namespace PlataformaStreaming
                     {
                         case 1:
                             {
-                                List<Contenido> peliculas = contenidoDAO.ObtenerPeliculas();
-
-                                foreach (Contenido pelicula in peliculas)
-                                {
-                                    string tiempo;
-
-                                    if (pelicula.Tipo == "Pelicula")
-                                    {
-                                        tiempo = " minutos";
-                                    }
-                                    else
-                                    {
-                                        tiempo = " capítulos";
-                                    }
-                                    Console.WriteLine(
-                                        pelicula.ContenidoId + " - " +
-                                        pelicula.Titulo + " (" +
-                                        pelicula.AnioLanzamiento + ") " +
-                                        pelicula.Tipo + " - " +
-                                        pelicula.Duracion +
-                                        tiempo + ".");
-                                }
-
+                                ListarContenidos(contenidoDAO.ObtenerPeliculas());
                                 break;
                             }
-
                         case 2:
                             {
-                                // objeto nueva pelicula
-                                Contenido nuevoContenido = new Contenido();
-
-                                // titulo
-                                while (true)
-                                {
-                                    Console.Write("Titulo: ");
-                                    nuevoContenido.Titulo = Console.ReadLine() ?? ""; 
-
-                                    if (string.IsNullOrWhiteSpace(nuevoContenido.Titulo))
-                                    {
-                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El titulo no puede estar vacío.");
-                                        continue;
-                                    }
-                                    break;
-                                }
-
-                                // descripcion
-                                while (true)
-                                {
-                                    Console.Write("Descripción: ");
-                                    nuevoContenido.Descripcion = Console.ReadLine() ?? "";
-
-                                    if (string.IsNullOrWhiteSpace(nuevoContenido.Descripcion))
-                                    {
-                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El titulo no puede estar vacío.");
-                                        break;
-                                    }
-                                    break;
-                                }
-
-                                // año
-                                int anio;
-
-                                while (true)
-                                {
-                                    Console.Write("Año de lanzamiento: ");
-                                    string entradaAnio = Console.ReadLine() ?? "";
-
-                                    if (!int.TryParse(entradaAnio, out anio))
-                                    {
-                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un año valido.");
-                                        continue;
-                                    }
-                                    if (anio < 1900 || anio > DateTime.Now.Year)
-                                    {
-                                        MostrarTexto(ConsoleColor.DarkYellow, "El año está fuera del rango permitido.");
-                                        continue;
-                                    }
-                                    break;
-                                }
-
-                                nuevoContenido.AnioLanzamiento = anio;
-
-                                // tipo
-                                while (true)
-                                {
-                                    Console.Write("\n1) Pelicula\n2) Serie\n");
-                                    string entradaTipo = Console.ReadLine() ?? "";
-
-                                    if (entradaTipo == "1" || entradaTipo == "2")
-                                    {
-                                        if (entradaTipo == "1")
-                                        {
-                                            nuevoContenido.Tipo = "Pelicula";
-                                        }
-                                        else
-                                        {
-                                            nuevoContenido.Tipo = "Serie";
-                                        }
-
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un número valido.");
-                                        continue;
-                                    }
-          
-                                }
-
-                                // duracion
-                                while (true)
-                                {
-                                    Console.Write("¿Cuánto dura?\n");
-                                    MostrarTexto(ConsoleColor.Cyan, "Si es Película son minutos, si es Serie son episodios.");
-                                    string entradaDuracion = Console.ReadLine() ?? "";
-
-                                    if (!int.TryParse(entradaDuracion, out int duracion))
-                                    {
-                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un número valido.");
-                                        continue;
-                                    }
-
-                                    if (duracion <= 0)
-                                    {
-                                        MostrarTexto(ConsoleColor.DarkYellow, "La duración debe ser mayor a cero.");
-                                        continue;
-                                    }
-                                    nuevoContenido.Duracion = duracion;
-
-                                    break;
-
-                                }
-
-                                // agregar pelicula
-                                contenidoDAO.AgregarContenido(nuevoContenido);
-
-                                Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine($"{nuevoContenido.Tipo} guardada correctamente:");
-                                Console.BackgroundColor = ConsoleColor.Gray;
-                                Console.ForegroundColor = ConsoleColor.Black;
-                                Console.WriteLine(
-                                        nuevoContenido.Titulo + " (" +
-                                        nuevoContenido.AnioLanzamiento + ")");
-                                Console.ResetColor();
-                                Console.WriteLine();
-
+                                ListarContenidos(contenidoDAO.ObtenerSeries());
                                 break;
                             }
 
                         case 3:
+                            {
+                                AgregarNuevoContenido(contenidoDAO);
+                                break;
+                            }
+
+                        case 4:
                             {
                                 List<Contenido> contenidos = contenidoDAO.ObtenerPeliculas(); // obtener peliculas antes de modificar
 
@@ -282,7 +152,7 @@ namespace PlataformaStreaming
 
                             }
 
-                        case 4:
+                        case 5:
                             {
                                 while (true)
                                 {
@@ -379,9 +249,9 @@ namespace PlataformaStreaming
 
                             }
 
-                        case 5:
+                        case 6:
                             {
-                                List<Contenido> contenidos = contenidoDAO.ObtenerPeliculas();
+                                List<Contenido> contenidos = contenidoDAO.ObtenerTodosActivos();
 
                                 if (contenidos.Count == 0)
                                 {
@@ -421,7 +291,7 @@ namespace PlataformaStreaming
                                 }
                             }
 
-                        case 6:
+                        case 7:
                             {
                                 List<Contenido> peliculasBajas = contenidoDAO.MostrarBajas();
 
@@ -452,7 +322,7 @@ namespace PlataformaStreaming
                                 break;
                             }
 
-                        case 7:
+                        case 8:
                             {
                                 List<Contenido> contenidosBajas = contenidoDAO.MostrarBajas();
 
@@ -512,21 +382,32 @@ namespace PlataformaStreaming
                                 break;
                             }
 
-                        case 8:
-                            HistorialDAO historialDAO = new HistorialDAO();
-
-                            var historial = historialDAO.ObtenerHistorial();
-                            historialDAO.DescargarHistorial(historial);
-                            break;
-
                         case 9:
-                            Console.WriteLine("Programando operación...");
-                            break;
+                            {
+                                HistorialDAO historialDAO = new HistorialDAO();
+                                List<Historial> historial = historialDAO.ObtenerHistorial();
+                                historialDAO.DescargarHistorial(historial);
+                                break;
+                            }     
+
+                        case 10:
+                            {
+                                GestionarRolUsuario("Usuario", "Administrador");
+                                break;
+                            }
+
+                        case 11:
+                            {
+                                GestionarRolUsuario("Administrador", "Usuario");
+                                break;
+                            }
 
 
                         case 0:
-                            UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "Cerrando sesión...");
-                            return;
+                            {
+                                UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "Cerrando sesión...");
+                                return;
+                            }
 
                         default:
                             UtilidadesConsola.MostrarTexto(ConsoleColor.Red, "Opcion no válida.");
@@ -536,14 +417,16 @@ namespace PlataformaStreaming
             }
             else
             {
-                while (opcion != 4)
+                while (opcion != 0)
                 {
-                    Console.WriteLine("\n--- MENU DE CONTENIDOS ---");
-                    Console.WriteLine("1. Listar contenidos");
-                    Console.WriteLine("2. Agregar contenido");
-                    Console.WriteLine("3. Modificar contenido");
+                    Console.WriteLine("\n--- MENU DE USUARIO ---");
+                    Console.WriteLine("1. Listar películas");
+                    Console.WriteLine("2. Listar series");
+                    Console.WriteLine("3. Ver mi perfil.");
+                    Console.WriteLine("4. Buscar contenido por título.");
                     Console.WriteLine();
-                    Console.WriteLine("4. Cerrar sesión");
+                    Console.WriteLine("5. Cerrar sesión");
+                    Console.WriteLine();
                     Console.Write("Seleccione una opción: ");
 
                     if (!int.TryParse(Console.ReadLine(), out opcion)) // si no ingresa un número
@@ -557,228 +440,29 @@ namespace PlataformaStreaming
                     {
                         case 1:
                             {
-                                List<Contenido> contenidos = contenidoDAO.ObtenerPeliculas();
-
-                                foreach (Contenido contenido in contenidos)
-                                {
-                                    string tiempo;
-
-                                    if (contenido.Tipo == "Pelicula")
-                                    {
-                                        tiempo = " minutos";
-                                    }
-                                    else
-                                    {
-                                        tiempo = " capítulos";
-                                    }
-                                    Console.WriteLine(
-                                        contenido.ContenidoId + " - " +
-                                        contenido.Titulo + " (" +
-                                        contenido.AnioLanzamiento + ") " +
-                                        contenido.Tipo + " - " +
-                                        contenido.Duracion +
-                                        tiempo + ".");
-                                }
-
+                                ListarContenidos(contenidoDAO.ObtenerPeliculas());
                                 break;
                             }
 
                         case 2:
                             {
-                                // objeto nueva pelicula
-                                Contenido nuevoContenido = new Contenido();
-
-                                // titulo
-                                while (true)
-                                {
-                                    Console.Write("Titulo: ");
-                                    nuevoContenido.Titulo = Console.ReadLine() ?? "";
-
-                                    if (string.IsNullOrWhiteSpace(nuevoContenido.Titulo))
-                                    {
-                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El titulo no puede estar vacío.");
-                                        continue;
-                                    }
-                                    break;
-                                }
-
-                                // descripcion
-                                while (true)
-                                {
-                                    Console.Write("Descripción: ");
-                                    nuevoContenido.Descripcion = Console.ReadLine() ?? "";
-
-                                    if (string.IsNullOrWhiteSpace(nuevoContenido.Descripcion))
-                                    {
-                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El titulo no puede estar vacío.");
-                                        break;
-                                    }
-                                    break;
-                                }
-
-                                // año
-                                int anio;
-
-                                while (true)
-                                {
-                                    Console.Write("Año de lanzamiento: ");
-                                    string entradaAnio = Console.ReadLine() ?? "";
-
-                                    if (!int.TryParse(entradaAnio, out anio))
-                                    {
-                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un año valido.");
-                                        continue;
-                                    }
-                                    if (anio < 1900 || anio > DateTime.Now.Year)
-                                    {
-                                        MostrarTexto(ConsoleColor.DarkYellow, "El año está fuera del rango permitido.");
-                                        continue;
-                                    }
-                                    break;
-                                }
-
-                                nuevoContenido.AnioLanzamiento = anio;
-
-                                // tipo
-                                while (true)
-                                {
-                                    Console.Write("\n1) Pelicula\n2) Serie\n");
-                                    string entradaTipo = Console.ReadLine() ?? "";
-
-                                    if (entradaTipo == "1" || entradaTipo == "2")
-                                    {
-                                        if (entradaTipo == "1")
-                                        {
-                                            nuevoContenido.Tipo = "Pelicula";
-                                        }
-                                        else
-                                        {
-                                            nuevoContenido.Tipo = "Serie";
-                                        }
-
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un número valido.");
-                                        continue;
-                                    }
-
-                                }
-
-                                // duracion
-                                while (true)
-                                {
-                                    Console.Write("¿Cuánto dura?\n");
-                                    MostrarTexto(ConsoleColor.Cyan, "Si es Película son minutos, si es Serie son episodios.");
-                                    string entradaDuracion = Console.ReadLine() ?? "";
-
-                                    if (!int.TryParse(entradaDuracion, out int duracion))
-                                    {
-                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Ingrese un número valido.");
-                                        continue;
-                                    }
-
-                                    if (duracion <= 0)
-                                    {
-                                        MostrarTexto(ConsoleColor.DarkYellow, "La duración debe ser mayor a cero.");
-                                        continue;
-                                    }
-                                    nuevoContenido.Duracion = duracion;
-
-                                    break;
-
-                                }
-
-                                // agregar pelicula
-                                contenidoDAO.AgregarContenido(nuevoContenido);
-
-                                Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine($"{nuevoContenido.Tipo} guardada correctamente:");
-                                Console.BackgroundColor = ConsoleColor.Gray;
-                                Console.ForegroundColor = ConsoleColor.Black;
-                                Console.WriteLine(
-                                        nuevoContenido.Titulo + " (" +
-                                        nuevoContenido.AnioLanzamiento + ")");
-                                Console.ResetColor();
-                                Console.WriteLine();
-
+                                MostrarMiPerfil();
                                 break;
                             }
 
                         case 3:
                             {
-                                List<Contenido> peliculas = contenidoDAO.ObtenerPeliculas(); // obtener peliculas antes de modificar
-
-                                Console.WriteLine("ID de la película a modificar: ");
-
-                                if (!int.TryParse(Console.ReadLine(), out int id))
-                                {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "ID inválido.");
-                                    break;
-                                }
-
-                                Contenido pelicula = null; // creamos el objeto sin ninguna pelicula seleccionada
-
-                                foreach (Contenido p in peliculas)
-                                {
-                                    if (p.ContenidoId == id) // comparamos el id de cada pelicula con lo que ingresó el usuario
-                                    {
-                                        pelicula = p; // si el id existe se lo asignamos a pelicula
-                                        break;
-                                    }
-                                }
-
-                                if (pelicula == null)
-                                {
-                                    UtilidadesConsola.MostrarTexto(
-                                        ConsoleColor.Red,
-                                        "No existe una película con ese ID."
-                                    );
-
-                                    break;
-                                }
-
-                                pelicula.ContenidoId = id;
-
-                                Console.Write("Nuevo titulo: ");
-                                pelicula.Titulo = Console.ReadLine();
-
-                                if (string.IsNullOrWhiteSpace(pelicula.Titulo))
-                                {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El título no puede estar vacío.");
-                                    break;
-                                }
-
-                                Console.WriteLine("Nueva descripcion: ");
-                                pelicula.Descripcion = Console.ReadLine();
-
-                                Console.Write("Nuevo año: ");
-
-                                if (!int.TryParse(Console.ReadLine(), out int anio))
-                                {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Año invalido.");
-                                    break;
-                                }
-
-                                pelicula.AnioLanzamiento = anio;
-
-                                bool modificado = contenidoDAO.ModificarContenido(pelicula);
-
-                                if (modificado)
-                                {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.Green, "Película modificada correctamente.");
-                                }
-                                else
-                                {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.Red, "No se pudo modificar la película.");
-                                }
-
+                                BuscarContenidoPorTitulo(contenidoDAO);
                                 break;
-
                             }
 
                         case 4:
+                            {
+                                ListarContenidos(contenidoDAO.ObtenerSeries());
+                                break;
+                            }
+
+                        case 0:
                             UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow, "Cerrando sesión...");
                             return;
 
@@ -789,5 +473,186 @@ namespace PlataformaStreaming
                 }
             }
         }
+
+        // Gestiona cambios de rol desde el menú administrativo.
+        private void GestionarRolUsuario(string rolActual, string rolNuevo)
+        {
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            List<Usuario> usuarios = usuarioDAO.ObtenerUsuariosPorRol(rolActual);
+
+            if (usuarios.Count == 0)
+            {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow,
+                    rolActual == "Usuario"
+                        ? "No hay usuarios comunes para convertir en administradores."
+                        : "No hay otros administradores disponibles.");
+                return;
+            }
+
+            Console.WriteLine(rolNuevo == "Administrador"
+                ? "\n--- USUARIOS DISPONIBLES PARA PROMOVER ---"
+                : "\n--- ADMINISTRADORES REGISTRADOS ---");
+
+            foreach (Usuario usuarioListado in usuarios)
+            {
+                Console.WriteLine($"{usuarioListado.NombreUsuario} - {usuarioListado.Nombre} {usuarioListado.Apellido}");
+            }
+
+            string nombreUsuario = Menu.EntradaConsola.LeerTextoObligatorio(
+                "Ingrese el nombre de usuario: ");
+
+            Usuario? usuarioSeleccionado = usuarioDAO.BuscarPorNombreUsuario(nombreUsuario);
+
+            if (usuarioSeleccionado == null)
+            {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Red, "No existe un usuario con ese nombre.");
+                return;
+            }
+
+            if (!string.Equals(usuarioSeleccionado.Rol, rolActual, StringComparison.OrdinalIgnoreCase))
+            {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow,
+                    rolNuevo == "Administrador"
+                        ? "Ese usuario ya tiene privilegios de administrador."
+                        : "Ese usuario no tiene el rol de administrador.");
+                return;
+            }
+
+            if (rolNuevo == "Usuario")
+            {
+                if (string.Equals(usuarioSeleccionado.NombreUsuario, usuario.NombreUsuario,
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    UtilidadesConsola.MostrarTexto(ConsoleColor.Red,
+                        "No podés quitarte el rol de administrador desde la sesión actual.");
+                    return;
+                }
+
+                if (usuarioDAO.ContarAdministradores() <= 1)
+                {
+                    UtilidadesConsola.MostrarTexto(ConsoleColor.Red,
+                        "No se puede quitar el rol: debe quedar al menos un administrador.");
+                    return;
+                }
+            }
+
+            bool actualizado = usuarioDAO.CambiarRol(nombreUsuario, rolNuevo);
+
+            if (actualizado)
+            {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Green,
+                    rolNuevo == "Administrador"
+                        ? $"Se otorgó el rol de administrador a {nombreUsuario}."
+                        : $"Se quitó el rol de administrador a {nombreUsuario}.");
+            }
+            else
+            {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Red,
+                    "No se pudo actualizar el rol del usuario.");
+            }
+        }
+
+        // Solicita y valida los datos del contenido sin llenar el case del menú de while.
+        private void AgregarNuevoContenido(ContenidoDAO contenidoDAO)
+        {
+            Contenido nuevoContenido = new Contenido
+            {
+                Titulo = Menu.EntradaConsola.LeerTextoObligatorio("Título: "),
+                Descripcion = Menu.EntradaConsola.LeerTextoObligatorio("Descripción: "),
+                AnioLanzamiento = LeerAnio(),
+                Tipo = LeerTipoContenido()
+            };
+
+            nuevoContenido.Duracion = LeerDuracion(nuevoContenido.Tipo);
+            contenidoDAO.AgregarContenido(nuevoContenido);
+
+            UtilidadesConsola.MostrarTexto(ConsoleColor.Green,
+                $"{nuevoContenido.Tipo} guardada correctamente: {nuevoContenido.Titulo} ({nuevoContenido.AnioLanzamiento}).");
+        }
+
+        private int LeerAnio()
+        {
+            while (true)
+            {
+                string entrada = Menu.EntradaConsola.LeerTextoObligatorio("Año de lanzamiento: ");
+                if (int.TryParse(entrada, out int anio) && anio >= 1900 && anio <= DateTime.Now.Year)
+                    return anio;
+
+                UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow,
+                    $"Ingrese un año entre 1900 y {DateTime.Now.Year}.");
+            }
+        }
+
+        private int LeerDuracion(string tipo)
+        {
+            while (true)
+            {
+                Console.Write(tipo == "Pelicula" ? "Duración en minutos: " : "Cantidad de episodios: ");
+                string entrada = Menu.EntradaConsola.LeerTextoObligatorio("");
+
+                if (int.TryParse(entrada, out int duracion) && duracion > 0)
+                    return duracion;
+
+                UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow,
+                    "La duración debe ser un número entero mayor a cero.");
+            }
+        }
+
+        private string LeerTipoContenido()
+        {
+            while (true)
+            {
+                Console.WriteLine("Tipo de contenido:");
+                Console.WriteLine("1. Película");
+                Console.WriteLine("2. Serie");
+                string opcion = Menu.EntradaConsola.LeerTextoObligatorio("Seleccione una opción: ");
+
+                if (opcion == "1") return "Pelicula";
+                if (opcion == "2") return "Serie";
+
+                UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Seleccione 1 o 2.");
+            }
+        }
+
+        private void MostrarMiPerfil()
+        {
+            Console.WriteLine("\n--- MI PERFIL ---");
+            Console.WriteLine($"ID: {usuario.UsuarioId}");
+            Console.WriteLine($"Nombre: {usuario.Nombre}");
+            Console.WriteLine($"Apellido: {usuario.Apellido}");
+            Console.WriteLine($"Nombre de usuario: {usuario.NombreUsuario}");
+            Console.WriteLine($"Correo electrónico: {usuario.Email}");
+            Console.WriteLine($"Rol: {usuario.Rol}");
+            Console.WriteLine($"Fecha de registro: {usuario.FechaRegistro:dd/MM/yyyy HH:mm}");
+            Console.WriteLine($"Suscripción activa: {(usuario.SuscripcionActiva ? "Sí" : "No")}");
+            Console.WriteLine("\nPor seguridad, no se muestran los datos de su contraseña.");
+        }
+
+        private void BuscarContenidoPorTitulo(ContenidoDAO contenidoDAO)
+        {
+            string tituloBuscado = Menu.EntradaConsola.LeerTextoObligatorio("Ingrese el título que desea buscar: ");
+            List<Contenido> resultados = contenidoDAO.BuscarPorTitulo(tituloBuscado);
+
+            if (resultados.Count == 0)
+            {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow,
+                    $"No existe contenido que coincida con el título '{tituloBuscado}'.");
+                return;
+            }
+
+            ListarContenidos(resultados);
+        }
+
+        private void ListarContenidos(List<Contenido> contenidos)
+        {
+            if (contenidos.Count == 0) return;
+
+            foreach (Contenido contenido in contenidos)
+            {
+                string unidad = contenido.Tipo == "Pelicula" ? "minutos" : "capítulos";
+                Console.WriteLine($"{contenido.ContenidoId} - {contenido.Titulo} ({contenido.AnioLanzamiento}) {contenido.Tipo} - {contenido.Duracion} {unidad}.");
+            }
+        }
+
     }
 }

@@ -1,63 +1,113 @@
 ﻿using Microsoft.Data.Sqlite;
-using PlataformaStraming.Interfaces;
+using PlataformaStreaming.Interfaces;
 using System.Collections.Generic;
 
 namespace PlataformaStreaming
 {
     internal class ContenidoDAO : IContenidoDAO
     {
-        public List<Contenido> ObtenerPeliculas() // lista de objetos 'Contenido'
+        // Devuelve únicamente las películas activas.
+        public List<Contenido> ObtenerPeliculas()
         {
-            List<Contenido> peliculas = new List<Contenido>();
+            return ObtenerPorTipo("Pelicula");
+        }
+
+        // Devuelve únicamente las series activas.
+        public List<Contenido> ObtenerSeries()
+        {
+            return ObtenerPorTipo("Serie");
+        }
+
+        // Devuelve todo el contenido activo. Se utiliza para las operaciones
+        // administrativas que pueden aplicarse tanto a películas como a series.
+        public List<Contenido> ObtenerTodosActivos()
+        {
+            return ObtenerPorTipo(null);
+        }
+
+        private List<Contenido> ObtenerPorTipo(string? tipo)
+        {
+            List<Contenido> contenidos = new List<Contenido>();
 
             string sql = @"
                 SELECT contenido_id, titulo, descripcion, anio_lanzamiento, tipo, duracion
                 FROM Contenidos
-                    WHERE estado = 1;
-            ";
+                WHERE estado = 1
+                  AND ($tipo IS NULL OR tipo = $tipo)
+                ORDER BY titulo COLLATE NOCASE;";
 
-            using (SqliteConnection conexion = ConexionDB.ObtenerConexion()) // reutilizar conexion de ConexionDB
+            using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
             {
                 conexion.Open();
 
                 using (SqliteCommand comando = new SqliteCommand(sql, conexion))
                 {
-                    // comando.Parameters.AddWithValue("@tipo", "Pelicula"); // Parameters y AddWithValue son de Microsoft.Data.Sqlite -> tipo es el marcador de la consulta SQL y le asignamos el valor Película
+                    comando.Parameters.AddWithValue("$tipo", (object?)tipo ?? DBNull.Value);
 
-                    using (SqliteDataReader lector = comando.ExecuteReader()) // objeto lector de tipo SqliteDataReader (lee resultados del SELECT fila por fila)
+                    using (SqliteDataReader lector = comando.ExecuteReader())
                     {
-
                         while (lector.Read())
                         {
-                            Contenido contenido = new Contenido();
-
-                            contenido.ContenidoId = lector.GetInt32(0); // GetInt32 obtiene el valor de la columna 0 y lo devuelve como int
-                            contenido.Titulo = lector.GetString(1);
-                            contenido.Descripcion = lector.IsDBNull(2) ? "" : lector.GetString(2); // si el valor es Null lo deja vacío "", sino toma el texto
-                            contenido.AnioLanzamiento = lector.IsDBNull(3) ? 0 : lector.GetInt32(3); // el ? pregunta si cumple la condicion (es Nulo?), si lo hace (true) deja un 0, sino, toma el valor como Int32
-                            contenido.Tipo = lector.GetString(4);
-                            contenido.Duracion = lector.IsDBNull(5) ? 0 : lector.GetInt32(5);
-
-                            peliculas.Add(contenido); // agregar cada pelicula encontrada a la lista
-
+                            contenidos.Add(new Contenido
+                            {
+                                ContenidoId = lector.GetInt32(0),
+                                Titulo = lector.GetString(1),
+                                Descripcion = lector.IsDBNull(2) ? "" : lector.GetString(2),
+                                AnioLanzamiento = lector.IsDBNull(3) ? 0 : lector.GetInt32(3),
+                                Tipo = lector.GetString(4),
+                                Duracion = lector.IsDBNull(5) ? 0 : lector.GetInt32(5)
+                            });
                         }
                     }
                 }
             }
 
-            // mostrar mensaje si no hay peliculas registradas
-            if (peliculas.Count == 0) // Count es un len()
-            {
-                UtilidadesConsola.MostrarTexto(
-                    ConsoleColor.Yellow,
-                    "No hay películas registradas."
-                );
+            return contenidos;
+        }
 
+        // Busca contenido activo por coincidencia parcial, sin distinguir
+        // mayúsculas/minúsculas (también funciona con títulos acentuados).
+        public List<Contenido> BuscarPorTitulo(string tituloBuscado)
+        {
+            List<Contenido> resultados = new List<Contenido>();
+
+            if (string.IsNullOrWhiteSpace(tituloBuscado))
+                return resultados;
+
+            string sql = @"
+                SELECT contenido_id, titulo, descripcion, anio_lanzamiento, tipo, duracion
+                FROM Contenidos
+                WHERE estado = 1
+                ORDER BY titulo COLLATE NOCASE;";
+
+            using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
+            {
+                conexion.Open();
+
+                using (SqliteCommand comando = new SqliteCommand(sql, conexion))
+                using (SqliteDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        string titulo = lector.GetString(1);
+
+                        if (titulo.Contains(tituloBuscado.Trim(), StringComparison.OrdinalIgnoreCase))
+                        {
+                            resultados.Add(new Contenido
+                            {
+                                ContenidoId = lector.GetInt32(0),
+                                Titulo = titulo,
+                                Descripcion = lector.IsDBNull(2) ? "" : lector.GetString(2),
+                                AnioLanzamiento = lector.IsDBNull(3) ? 0 : lector.GetInt32(3),
+                                Tipo = lector.GetString(4),
+                                Duracion = lector.IsDBNull(5) ? 0 : lector.GetInt32(5)
+                            });
+                        }
+                    }
+                }
             }
-            
-            return peliculas; // devuelve la lista a quien llamó al método ObtenerPeliculas()
-            
-            
+
+            return resultados;
         }
 
         // void significa que el metodo no devuelve un resultado

@@ -32,8 +32,10 @@ namespace PlataformaStreaming
                     Console.WriteLine("No se encontró ese usuario.");
                 }
                 */
-                
+
                 // ============ INICIAR
+
+                Console.Title = "TUX Streaming";
 
                 // validar licencia
                 if (!ValidadorLicencia.Validar())
@@ -53,6 +55,12 @@ namespace PlataformaStreaming
                     // mostrar el menú de login
                     MenuLogIn menuLogin = new MenuLogIn(autenticacion);
                     Usuario? usuario = menuLogin.Mostrar();
+
+                    // Si el menú devuelve null, el usuario eligió salir.
+                    if (usuario == null)
+                    {
+                        break;
+                    }
 
                     // si se autenticó, ingresar al menú de contenidos
                     if (usuario != null)

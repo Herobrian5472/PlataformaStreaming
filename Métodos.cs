@@ -51,6 +51,10 @@ namespace PlataformaStreaming.Metodos
             return usuario;
         }
 
+        public static void MostrarTitulo(){
+
+        }
+
         public static class EntradaConsola
         {
             public static int LeerOpcion()

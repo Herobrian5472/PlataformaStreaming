@@ -19,6 +19,13 @@ namespace PlataformaStreaming
 
             while (menuActivo)
             {
+
+                Console.WriteLine();
+                Console.WriteLine("==============================");
+                Console.WriteLine("       ¡BIENVENIDO A          ");
+                Console.WriteLine("       TUX STREAMING!         ");
+                Console.WriteLine("==============================");
+
                 Console.WriteLine("\n=== MENU INICIAL ===");
                 Console.WriteLine("1. Crear una cuenta");
                 Console.WriteLine("2. Inicia sesión");
