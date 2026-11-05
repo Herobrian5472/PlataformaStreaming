@@ -35,7 +35,7 @@ namespace PlataformaStreaming
 
                 if (!int.TryParse(Console.ReadLine(), out int opcion))
                 {
-                    Console.WriteLine("Ingresá una opción válida.");
+                    UtilidadesConsola.MostrarTexto(ConsoleColor.Red,"Ingresá una opción válida.");
                     continue;
                 }
 
@@ -58,11 +58,11 @@ namespace PlataformaStreaming
 
                     case 0:
                         menuActivo = false;
-                        Console.WriteLine("¡Hasta pronto!");
+                        UtilidadesConsola.MostrarTexto(ConsoleColor.Cyan,"¡Hasta pronto!");
                         break;
 
                     default:
-                        Console.WriteLine("La opción ingresada no existe.");
+                        UtilidadesConsola.MostrarTexto(ConsoleColor.Red,"La opción ingresada no existe.");
                         break;
                 }
             }
@@ -105,7 +105,7 @@ namespace PlataformaStreaming
 
             if (usuario == null)
             {
-                Console.WriteLine("\nUsuario o contraseña incorrectos.");
+                UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow,"\nUsuario o contraseña incorrectos.");
             }
 
             return usuario;
@@ -125,7 +125,7 @@ namespace PlataformaStreaming
                     return texto;
                 }
 
-                Console.WriteLine("Este campo no puede estar vacío");
+                UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow,"Este campo no puede estar vacío");
             }
         }
     }

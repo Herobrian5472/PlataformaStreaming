@@ -65,7 +65,7 @@ namespace PlataformaStreaming
                     // si se autenticó, ingresar al menú de contenidos
                     if (usuario != null)
                     {
-                        Console.WriteLine(
+                       UtilidadesConsola.MostrarTexto(ConsoleColor.Green, (
                             "\n¡Bienvenido " + usuario.NombreUsuario + "!"
                         );
 

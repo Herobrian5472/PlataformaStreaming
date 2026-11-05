@@ -68,7 +68,7 @@ namespace PlataformaStreaming.Servicios
 
             _usuarioDAO.RegistrarUsuario(usuario);
 
-            return "¡Registro exitoso! Ya podés iniciar sesión en Masita TV.";
+            return "¡Registro exitoso! Ya podés iniciar sesión en TUX STREAMING.";
         }
 
         public Usuario? IniciarSesion(
