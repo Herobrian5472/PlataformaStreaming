@@ -30,10 +30,10 @@ namespace PlataformaStreaming
             List<Contenido> contenidos = new List<Contenido>();
 
             string sql = @"
-                SELECT contenido_id, titulo, descripcion, anio_lanzamiento, tipo, duracion
+                SELECT contenido_id, titulo, descripcion, anio_lanzamiento, tipo, genero, duracion
                 FROM Contenidos
                 WHERE estado = 1
-                  AND ($tipo IS NULL OR tipo = $tipo)
+                  AND ($tipo IS NULL OR LOWER(REPLACE(REPLACE(tipo, 'í', 'i'), 'Í', 'I')) = LOWER(REPLACE(REPLACE($tipo, 'í', 'i'), 'Í', 'I')))
                 ORDER BY titulo COLLATE NOCASE;";
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
@@ -55,7 +55,8 @@ namespace PlataformaStreaming
                                 Descripcion = lector.IsDBNull(2) ? "" : lector.GetString(2),
                                 AnioLanzamiento = lector.IsDBNull(3) ? 0 : lector.GetInt32(3),
                                 Tipo = lector.GetString(4),
-                                Duracion = lector.IsDBNull(5) ? 0 : lector.GetInt32(5)
+                                Genero = lector.IsDBNull(5) ? "" : lector.GetString(5),
+                                Duracion = lector.IsDBNull(6) ? 0 : lector.GetInt32(6)
                             });
                         }
                     }
@@ -75,7 +76,7 @@ namespace PlataformaStreaming
                 return resultados;
 
             string sql = @"
-                SELECT contenido_id, titulo, descripcion, anio_lanzamiento, tipo, duracion
+                SELECT contenido_id, titulo, descripcion, anio_lanzamiento, tipo, genero, duracion
                 FROM Contenidos
                 WHERE estado = 1
                 ORDER BY titulo COLLATE NOCASE;";
@@ -100,7 +101,8 @@ namespace PlataformaStreaming
                                 Descripcion = lector.IsDBNull(2) ? "" : lector.GetString(2),
                                 AnioLanzamiento = lector.IsDBNull(3) ? 0 : lector.GetInt32(3),
                                 Tipo = lector.GetString(4),
-                                Duracion = lector.IsDBNull(5) ? 0 : lector.GetInt32(5)
+                                Genero = lector.IsDBNull(5) ? "" : lector.GetString(5),
+                                Duracion = lector.IsDBNull(6) ? 0 : lector.GetInt32(6)
                             });
                         }
                     }
@@ -115,9 +117,9 @@ namespace PlataformaStreaming
         {
             string sql = @"
                 INSERT INTO Contenidos
-                    (titulo, descripcion, anio_lanzamiento, tipo, estado, duracion)
+                    (titulo, descripcion, anio_lanzamiento, tipo, genero, estado, duracion)
                 VALUES
-                    (@titulo, @descripcion, @anio, @tipo, @estado, @duracion);
+                    (@titulo, @descripcion, @anio, @tipo, @genero, @estado, @duracion);
                 ";
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
@@ -137,6 +139,7 @@ namespace PlataformaStreaming
                             comando.Parameters.AddWithValue("@descripcion", contenido.Descripcion);
                             comando.Parameters.AddWithValue("@anio", contenido.AnioLanzamiento);
                             comando.Parameters.AddWithValue("@tipo", contenido.Tipo);
+                            comando.Parameters.AddWithValue("@genero", contenido.Genero ?? "");
                             comando.Parameters.AddWithValue("@estado", 1);
                             comando.Parameters.AddWithValue("@duracion", contenido.Duracion);
 
@@ -178,7 +181,7 @@ namespace PlataformaStreaming
         public bool ModificarContenido(Contenido contenido)
         {
             string sqlAnterior = @"
-                SELECT titulo, descripcion, anio_lanzamiento, duracion
+                SELECT titulo, descripcion, anio_lanzamiento, genero, duracion
                 FROM Contenidos
                 WHERE contenido_id = @id
                     AND tipo = @tipo
@@ -190,6 +193,7 @@ namespace PlataformaStreaming
                 SET titulo = @titulo,
                     descripcion = @descripcion,
                     anio_lanzamiento = @anio,
+                    genero = @genero,
                     duracion = @duracion
                 WHERE contenido_id = @id
                     AND tipo = @tipo
@@ -209,6 +213,7 @@ namespace PlataformaStreaming
                         string tituloAnterior;
                         string descripcionAnterior;
                         int anioAnterior;
+                        string generoAnterior;
                         int duracionAnterior;
 
                         using (SqliteCommand comandoAnterior =
@@ -230,7 +235,8 @@ namespace PlataformaStreaming
                                 tituloAnterior = lector.GetString(0);
                                 descripcionAnterior = lector.IsDBNull(1) ? "" : lector.GetString(1);
                                 anioAnterior = lector.GetInt32(2);
-                                duracionAnterior = lector.GetInt32(3);
+                                generoAnterior = lector.IsDBNull(3) ? "" : lector.GetString(3);
+                                duracionAnterior = lector.GetInt32(4);
                             }
                         }
 
@@ -242,6 +248,7 @@ namespace PlataformaStreaming
 
                             comando.Parameters.AddWithValue("@titulo", contenido.Titulo);
                             comando.Parameters.AddWithValue("@descripcion", contenido.Descripcion);
+                            comando.Parameters.AddWithValue("@genero", contenido.Genero ?? "");
                             comando.Parameters.AddWithValue("@anio", contenido.AnioLanzamiento);
                             comando.Parameters.AddWithValue("@duracion", contenido.Duracion);
                             comando.Parameters.AddWithValue("@id", contenido.ContenidoId);
@@ -261,6 +268,7 @@ namespace PlataformaStreaming
                             $"Titulo: '{tituloAnterior}' -> '{contenido.Titulo}'. " +
                             $"Descripción: '{descripcionAnterior}' -> '{contenido.Descripcion}'. " +
                             $"Año: '{anioAnterior}' -> '{contenido.AnioLanzamiento}'. " +
+                            $"Género: '{generoAnterior}' -> '{contenido.Genero}'. " +
                             $"Duración: '{duracionAnterior}' -> '{contenido.Duracion}'. ";
 
                         HistorialDAO historial = new HistorialDAO();
@@ -468,7 +476,7 @@ namespace PlataformaStreaming
 
             string sql = @"
                 SELECT contenido_id, titulo, descripcion,
-                    anio_lanzamiento, tipo, duracion
+                    anio_lanzamiento, tipo, genero, duracion
                 FROM Contenidos
                 WHERE estado = 0;
             ";
@@ -492,7 +500,8 @@ namespace PlataformaStreaming
                             contenido.Descripcion = lector.IsDBNull(2) ? "" : lector.GetString(2);
                             contenido.AnioLanzamiento = lector.IsDBNull(3) ? 0 : lector.GetInt32(3);
                             contenido.Tipo = lector.GetString(4);
-                            contenido.Duracion = lector.IsDBNull(5) ? 0 : lector.GetInt32(5);
+                            contenido.Genero = lector.IsDBNull(5) ? "" : lector.GetString(5);
+                            contenido.Duracion = lector.IsDBNull(6) ? 0 : lector.GetInt32(6);
 
                             peliculas.Add(contenido);
                         }

@@ -67,7 +67,7 @@ namespace PlataformaStreaming
                     {
                        UtilidadesConsola.MostrarTexto(ConsoleColor.Green, (
                             "\n¡Bienvenido " + usuario.NombreUsuario + "!"
-                        );
+                        ));
 
                         MenuContenidos menu = new MenuContenidos(usuario);
                         menu.Mostrar();

@@ -137,6 +137,8 @@ namespace PlataformaStreaming
 
                                 contenido.AnioLanzamiento = anio;
 
+                                contenido.Genero = LeerGenero();
+
                                 bool modificado = contenidoDAO.ModificarContenido(contenido);
 
                                 if (modificado)
@@ -425,7 +427,7 @@ namespace PlataformaStreaming
                     Console.WriteLine("3. Ver mi perfil.");
                     Console.WriteLine("4. Buscar contenido por título.");
                     Console.WriteLine();
-                    Console.WriteLine("5. Cerrar sesión");
+                    Console.WriteLine("0. Cerrar sesión");
                     Console.WriteLine();
                     Console.Write("Seleccione una opción: ");
 
@@ -560,7 +562,8 @@ namespace PlataformaStreaming
                 Titulo = Menu.EntradaConsola.LeerTextoObligatorio("Título: "),
                 Descripcion = Menu.EntradaConsola.LeerTextoObligatorio("Descripción: "),
                 AnioLanzamiento = LeerAnio(),
-                Tipo = LeerTipoContenido()
+                Tipo = LeerTipoContenido(),
+                Genero = LeerGenero()
             };
 
             nuevoContenido.Duracion = LeerDuracion(nuevoContenido.Tipo);
@@ -640,17 +643,200 @@ namespace PlataformaStreaming
                 return;
             }
 
-            ListarContenidos(resultados);
+            ListarContenidos(resultados, mostrarDescripcion: true, preguntarReproduccion: true, reproducirDirectamente: true);
         }
 
-        private void ListarContenidos(List<Contenido> contenidos)
+        private string LeerGenero()
         {
-            if (contenidos.Count == 0) return;
+            return Menu.EntradaConsola.LeerTextoObligatorio("Género: ");
+        }
+
+        private void ListarContenidos(List<Contenido> contenidos, bool mostrarDescripcion = false, bool preguntarReproduccion = true, bool reproducirDirectamente = false)
+        {
+            if (contenidos.Count == 0)
+            {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow,
+                    "No hay contenidos para mostrar.");
+                return;
+            }
 
             foreach (Contenido contenido in contenidos)
             {
-                string unidad = contenido.Tipo == "Pelicula" ? "minutos" : "capítulos";
-                Console.WriteLine($"{contenido.ContenidoId} - {contenido.Titulo} ({contenido.AnioLanzamiento}) {contenido.Tipo} - {contenido.Duracion} {unidad}.");
+                string unidad = contenido.Tipo == "Pelicula" ? "minutos" : "episodios";
+
+                Console.WriteLine($"\n{contenido.ContenidoId} - {contenido.Titulo} ({contenido.AnioLanzamiento})");
+                Console.WriteLine($"Tipo: {contenido.Tipo} | Género: {contenido.Genero} | Duración: {contenido.Duracion} {unidad}");
+
+                if (mostrarDescripcion)
+                    Console.WriteLine($"Descripción: {contenido.Descripcion}");
+            }
+
+            if (preguntarReproduccion)
+            {
+                if (reproducirDirectamente)
+                    PreguntarReproduccionDirecta(contenidos);
+                else
+                    PreguntarSiDeseaReproducir(contenidos);
+            }
+        }
+
+        private void PreguntarReproduccionDirecta(List<Contenido> contenidos)
+        {
+            Console.Write("\n¿Desea reproducir alguno de estos contenidos? (S/N): ");
+            string respuesta = (Console.ReadLine() ?? "").Trim();
+
+            while (!respuesta.Equals("S", StringComparison.OrdinalIgnoreCase) &&
+                   !respuesta.Equals("N", StringComparison.OrdinalIgnoreCase))
+            {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Red,
+                    "Opción inválida. Ingrese S o N.");
+
+                Console.Write("\n¿Desea reproducir alguno de estos contenidos? (S/N): ");
+                respuesta = (Console.ReadLine() ?? "").Trim();
+            }
+
+            if (respuesta.Equals("N", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            if (contenidos.Count == 1)
+            {
+                MostrarMenuReproduccion(contenidos[0]);
+                return;
+            }
+
+            Console.Write("Ingrese el ID del contenido que desea reproducir: ");
+
+            if (!int.TryParse(Console.ReadLine(), out int id))
+            {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Red, "ID inválido.");
+                return;
+            }
+
+            Contenido? seleccionado = contenidos.Find(c => c.ContenidoId == id);
+
+            if (seleccionado == null)
+            {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Red,
+                    "El ID no corresponde a los contenidos listados.");
+                return;
+            }
+
+            MostrarMenuReproduccion(seleccionado);
+        }
+
+        private void PreguntarSiDeseaReproducir(List<Contenido> contenidos)
+        {
+            string respuesta;
+
+            do
+            {
+                Console.Write("\n¿Desea reproducir alguno de estos contenidos? (S/N): ");
+                respuesta = (Console.ReadLine() ?? "").Trim();
+
+                if (!respuesta.Equals("S", StringComparison.OrdinalIgnoreCase) &&
+                    !respuesta.Equals("N", StringComparison.OrdinalIgnoreCase))
+                {
+                    UtilidadesConsola.MostrarTexto(ConsoleColor.Red,
+                        "Opción inválida. Ingrese S o N.");
+                }
+
+            } while (!respuesta.Equals("S", StringComparison.OrdinalIgnoreCase) &&
+                     !respuesta.Equals("N", StringComparison.OrdinalIgnoreCase));
+
+            if (respuesta.Equals("N", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            Console.Write("Ingrese el ID del contenido: ");
+
+            if (!int.TryParse(Console.ReadLine(), out int id))
+            {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Red, "ID inválido.");
+                return;
+            }
+
+            Contenido? seleccionado = contenidos.Find(c => c.ContenidoId == id);
+
+            if (seleccionado == null)
+            {
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Red,
+                    "El ID no corresponde a los contenidos listados.");
+                return;
+            }
+
+            do
+            {
+                Console.Write($"¿Desea reproducir '{seleccionado.Titulo}'? (S/N): ");
+                respuesta = (Console.ReadLine() ?? "").Trim();
+
+                if (!respuesta.Equals("S", StringComparison.OrdinalIgnoreCase) &&
+                    !respuesta.Equals("N", StringComparison.OrdinalIgnoreCase))
+                {
+                    UtilidadesConsola.MostrarTexto(ConsoleColor.Red,
+                        "Opción inválida. Ingrese S o N.");
+                }
+
+            } while (!respuesta.Equals("S", StringComparison.OrdinalIgnoreCase) &&
+                     !respuesta.Equals("N", StringComparison.OrdinalIgnoreCase));
+
+            if (respuesta.Equals("S", StringComparison.OrdinalIgnoreCase))
+                MostrarMenuReproduccion(seleccionado);
+        }
+
+        private void MostrarMenuReproduccion(Contenido contenido)
+        {
+            bool reproduciendo = true;
+            string tipo = contenido.Tipo == "Pelicula" ? "PELÍCULA" : "SERIE";
+
+            UtilidadesConsola.MostrarTexto(ConsoleColor.Green,
+                $"\nREPRODUCIENDO {tipo}: {contenido.Titulo}");
+
+            while (true)
+            {
+                Console.WriteLine(reproduciendo ? "\nEstado: REPRODUCIENDO" : "\nEstado: PAUSADO");
+                Console.WriteLine("1. PAUSAR");
+                Console.WriteLine("2. REPRODUCIR");
+                Console.WriteLine("0. VOLVER");
+                Console.Write("Seleccione una opción: ");
+
+                string opcion = (Console.ReadLine() ?? "").Trim();
+
+                if (opcion == "1")
+                {
+                    if (!reproduciendo)
+                    {
+                        UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow,
+                            "La reproducción ya se encuentra pausada.");
+                    }
+                    else
+                    {
+                        reproduciendo = false;
+                        UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow,
+                            "Reproducción pausada.");
+                    }
+                }
+                else if (opcion == "2")
+                {
+                    if (reproduciendo)
+                    {
+                        UtilidadesConsola.MostrarTexto(ConsoleColor.Green,
+                            "La reproducción ya se encuentra en curso.");
+                    }
+                    else
+                    {
+                        reproduciendo = true;
+                        UtilidadesConsola.MostrarTexto(ConsoleColor.Green,
+                            "Reproduciendo...");
+                    }
+                }
+                else if (opcion == "0")
+                {
+                    break;
+                }
+                else
+                {
+                    UtilidadesConsola.MostrarTexto(ConsoleColor.Red,
+                        "Opción no válida.");
+                }
             }
         }
 
