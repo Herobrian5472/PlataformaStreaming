@@ -7,6 +7,7 @@
         public string Descripcion { get; set; }
         public int AnioLanzamiento { get; set; }
         public string Tipo { get; set; }
+        public string Genero { get; set; }
         public int Duracion { get; set; }
     }
 }

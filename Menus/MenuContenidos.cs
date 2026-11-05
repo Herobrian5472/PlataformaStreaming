@@ -446,19 +446,19 @@ namespace PlataformaStreaming
 
                         case 2:
                             {
-                                MostrarMiPerfil();
-                                break;
+                                ListarContenidos(contenidoDAO.ObtenerSeries());
+                                break; 
                             }
 
                         case 3:
                             {
-                                BuscarContenidoPorTitulo(contenidoDAO);
+                                MostrarMiPerfil();
                                 break;
                             }
 
                         case 4:
                             {
-                                ListarContenidos(contenidoDAO.ObtenerSeries());
+                                BuscarContenidoPorTitulo(contenidoDAO);
                                 break;
                             }
 
