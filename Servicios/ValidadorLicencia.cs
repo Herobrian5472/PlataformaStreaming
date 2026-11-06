@@ -28,12 +28,7 @@ namespace PlataformaStreaming
             );
             // tuve que forzar la creacion de licencia.txt dentro de .csproj para que el programa pueda encontrarlo
 
-            //temporal
-            /*
-            Console.WriteLine($"Buscamos la licencia en: {rutaArchivo}");
-            Console.WriteLine($"¿Existe el archivo?: {File.Exists(rutaArchivo)}");
-            */
-
+            
             // comprueba que exista el archivo
             if (!File.Exists(rutaArchivo))
             {

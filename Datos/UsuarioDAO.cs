@@ -75,8 +75,7 @@ namespace PlataformaStreaming.Datos
                         ContraseniaHash,
                         ContraseniaSalt,
                         Rol,
-                        FechaRegistro,
-                        SuscripcionActiva
+                        FechaRegistro
                     )
                     VALUES
                     (
@@ -87,8 +86,7 @@ namespace PlataformaStreaming.Datos
                         $contraseniaHash,
                         $contraseniaSalt,
                         $rol,
-                        $fechaRegistro,
-                        $suscripcionActiva
+                        $fechaRegistro
                     );";
 
                 using (SqliteCommand comando = new SqliteCommand(consulta, conexion))
@@ -108,8 +106,6 @@ namespace PlataformaStreaming.Datos
                     comando.Parameters.AddWithValue("$rol", usuario.Rol);
 
                     comando.Parameters.AddWithValue("$fechaRegistro", usuario.FechaRegistro.ToString("O"));
-
-                    comando.Parameters.AddWithValue("$suscripcionActiva", usuario.SuscripcionActiva ? 1 : 0);
 
                     comando.ExecuteNonQuery();
                 }
@@ -132,8 +128,7 @@ namespace PlataformaStreaming.Datos
                         ContraseniaHash,
                         ContraseniaSalt,
                         Rol,
-                        FechaRegistro,
-                        SuscripcionActiva
+                        FechaRegistro
                     FROM Usuarios
                     WHERE NombreUsuario = $nombreUsuario;";
 
@@ -156,7 +151,6 @@ namespace PlataformaStreaming.Datos
                                 ContraseniaSalt = lector.GetString(6),
                                 Rol = lector.GetString(7),
                                 FechaRegistro = DateTime.Parse(lector.GetString(8)),
-                                SuscripcionActiva = lector.GetInt32(9) == 1
                             };
                         }
                     }
@@ -178,7 +172,7 @@ namespace PlataformaStreaming.Datos
 
                 string consulta = @"
                     SELECT usuario_id, Nombre, Apellido, NombreUsuario, Email,
-                           Rol, FechaRegistro, SuscripcionActiva
+                           Rol, FechaRegistro
                     FROM Usuarios
                     WHERE Rol = $rol
                     ORDER BY NombreUsuario COLLATE NOCASE;";
@@ -200,7 +194,6 @@ namespace PlataformaStreaming.Datos
                                 Email = lector.GetString(4),
                                 Rol = lector.GetString(5),
                                 FechaRegistro = DateTime.Parse(lector.GetString(6)),
-                                SuscripcionActiva = lector.GetInt32(7) == 1
                             });
                         }
                     }

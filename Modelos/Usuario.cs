@@ -13,6 +13,5 @@ namespace PlataformaStreaming.Modelos
         public string ContraseniaSalt { get; set; } = "";
         public string Rol { get; set; } = "Usuario"; //Asigna el rol común por  defecto
         public DateTime FechaRegistro { get; set; }
-        public bool SuscripcionActiva { get; set; } //Indica si la cuenta tiene una suscripcion activa.
     }
 }

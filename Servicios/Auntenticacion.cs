@@ -63,7 +63,6 @@ namespace PlataformaStreaming.Servicios
                 Rol = "Usuario",
 
                 FechaRegistro = DateTime.Now,
-                SuscripcionActiva = false
             };
 
             _usuarioDAO.RegistrarUsuario(usuario);

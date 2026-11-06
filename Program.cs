@@ -9,33 +9,14 @@ namespace PlataformaStreaming
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             try
             {
-                // ================ CREAR ADMIN
 
-                /*
-                UsuarioDAO usuarioDAO = new UsuarioDAO();
+                string imagen = await ImagenAscii.ObtenerImagenAsync();
 
-                Console.Write("\nIngresá tu nombre de usuario para asignar el rol de administrador: ");
-                string nombreUsuarioAdmin = Console.ReadLine() ?? "";
-
-                bool actualizado = usuarioDAO.CambiarRol(nombreUsuarioAdmin, "Administrador");
-
-                if (actualizado)
-                {
-                    Console.WriteLine("¡Rol de administrador asignado correctamente!");
-                }
-                else
-                {
-                    Console.WriteLine("No se encontró ese usuario.");
-                }
-                */
-
-                // ============ INICIAR
-
-                Console.Title = "TUX Streaming";
+                Console.WriteLine(imagen);
 
                 // validar licencia
                 if (!ValidadorLicencia.Validar())

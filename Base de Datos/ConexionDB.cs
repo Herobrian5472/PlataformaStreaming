@@ -23,7 +23,6 @@ namespace PlataformaStreaming // mantiene la clase dentro del espacio de nombres
 
         }
 
-        // al iniciar la conexion Juli creó la tabla de Usuarios
         public static void InicializarBaseDeDatos()
         {
             using (SqliteConnection conexion = ObtenerConexion())
@@ -42,8 +41,7 @@ namespace PlataformaStreaming // mantiene la clase dentro del espacio de nombres
                         ContraseniaHash TEXT NOT NULL,
                         ContraseniaSalt TEXT NOT NULL,
                         Rol TEXT NOT NULL DEFAULT 'Usuario',
-                        FechaRegistro TEXT NOT NULL,
-                        SuscripcionActiva INTEGER NOT NULL DEFAULT 0
+                        FechaRegistro TEXT NOT NULL
                     );";
 
                 using (SqliteCommand comando = new SqliteCommand(
@@ -91,7 +89,6 @@ namespace PlataformaStreaming // mantiene la clase dentro del espacio de nombres
                     comando.ExecuteNonQuery();
                 }
 
-                // hay que hacer lo mismo que ella pero con las tablas Contenido e Historial, por si el profe borra streamind.db
             }
 
             // Verificar si existe el usuario ADMINISTRADOR:

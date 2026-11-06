@@ -790,7 +790,6 @@ namespace PlataformaStreaming
             Console.WriteLine($"Correo electrónico: {usuario.Email}");
             Console.WriteLine($"Rol: {usuario.Rol}");
             Console.WriteLine($"Fecha de registro: {usuario.FechaRegistro:dd/MM/yyyy HH:mm}");
-            Console.WriteLine($"Suscripción activa: {(usuario.SuscripcionActiva ? "Sí" : "No")}");
             Console.WriteLine("\nPor seguridad, no se muestran los datos de su contraseña.");
         }
 
