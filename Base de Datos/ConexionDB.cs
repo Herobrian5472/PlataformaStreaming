@@ -61,6 +61,7 @@ namespace PlataformaStreaming // mantiene la clase dentro del espacio de nombres
                         descripcion TEXT,
                         anio_lanzamiento INTEGER,
                         tipo TEXT NOT NULL,
+                        genero TEXT NOT NULL DEFAULT '',
                         estado INTEGER NOT NULL,
                         duracion INTEGER NOT NULL
                     );";
