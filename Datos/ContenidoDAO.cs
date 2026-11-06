@@ -199,7 +199,7 @@ namespace PlataformaStreaming
                 SELECT titulo, descripcion, anio_lanzamiento, genero, duracion
                 FROM Contenidos
                 WHERE contenido_id = @id
-                    AND tipo = @tipo
+                    AND tipo = @tipo COLLATE NOCASE
                     AND estado = 1;
             ";
 
@@ -211,7 +211,7 @@ namespace PlataformaStreaming
                     genero = @genero,
                     duracion = @duracion
                 WHERE contenido_id = @id
-                    AND tipo = @tipo
+                    AND tipo = @tipo COLLATE NOCASE
                     AND estado = 1;
             ";
             // UPDATE modifica registro existentes
@@ -526,14 +526,12 @@ namespace PlataformaStreaming
             string sqlTitulo = @"
                 SELECT titulo
                 FROM Contenidos
-                WHERE contenido_id = @id
-                    AND tipo = @tipo;
+                WHERE contenido_id = @id;
             ";
 
             string sqlEliminar = @"
                 DELETE FROM Contenidos
-                WHERE contenido_id = @id
-                    AND tipo = @tipo;
+                WHERE contenido_id = @id;
             ";
 
             using (SqliteConnection conexion = ConexionDB.ObtenerConexion())
@@ -553,7 +551,6 @@ namespace PlataformaStreaming
                             comandoTitulo.Transaction = transaccion;
 
                             comandoTitulo.Parameters.AddWithValue("@id", id);
-                            comandoTitulo.Parameters.AddWithValue("@tipo", "Pelicula");
 
                             object resultado = comandoTitulo.ExecuteScalar();
 
@@ -618,7 +615,6 @@ namespace PlataformaStreaming
                             comandoEliminar.Transaction = transaccion;
 
                             comandoEliminar.Parameters.AddWithValue("@id", id);
-                            comandoEliminar.Parameters.AddWithValue("@tipo", "Pelicula");
 
                             int filasAfectadas = comandoEliminar.ExecuteNonQuery();
 

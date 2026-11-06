@@ -41,7 +41,7 @@ namespace PlataformaStreaming
                     Console.WriteLine("2. Listar series");
                     Console.WriteLine("3. Agregar contenido");
                     Console.WriteLine("4. Modificar contenido");
-                    Console.WriteLine("4. Eliminar contenido");
+                    Console.WriteLine("5. Eliminar contenido");
                     Console.WriteLine("6. Dar contenido de baja");
                     Console.WriteLine("7. Ver contenidos dados de baja");
                     Console.WriteLine("8. Reactivar contenido");
@@ -82,7 +82,7 @@ namespace PlataformaStreaming
 
                         case 4:
                             {
-                                List<Contenido> contenidos = contenidoDAO.ObtenerPeliculas(); // obtener peliculas antes de modificar
+                                List<Contenido> contenidos = contenidoDAO.ObtenerTodosActivos(); // Obtener tanto pelis como series
 
                                 Console.WriteLine("ID del contenido a modificar: ");
 
@@ -113,52 +113,177 @@ namespace PlataformaStreaming
                                     break;
                                 }
 
-                                contenido.ContenidoId = id;
+                                Console.WriteLine("CONTENIDO SELECCIONADO");
 
-                                Console.Write("Nuevo título: ");
-                                contenido.Titulo = Console.ReadLine();
+                                Console.WriteLine($"Título: {contenido.Titulo} | Tipo: {contenido.Tipo} | Año: {contenido.AnioLanzamiento} ");
 
-                                if (string.IsNullOrWhiteSpace(contenido.Titulo))
+                                string confirmacion;
+
+                                do
                                 {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "El título no puede estar vacío.");
+                                    Console.Write("\n¿Está seguro de que desea modificar este contenido? (S/N): ");
+                                    confirmacion = Console.ReadLine() ?? "";
+
+                                    if (!confirmacion.Equals("S", StringComparison.OrdinalIgnoreCase) &&
+                                        !confirmacion.Equals("N", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        UtilidadesConsola.MostrarTexto(
+                                            ConsoleColor.DarkYellow,
+                                            "Opción inválida. Debe ingresar S o N. Inténtelo nuevamente."
+                                        );
+                                    }
+
+                                } while (!confirmacion.Equals("S", StringComparison.OrdinalIgnoreCase) &&
+                                         !confirmacion.Equals("N", StringComparison.OrdinalIgnoreCase));
+
+                                if (confirmacion.Equals("N", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    UtilidadesConsola.MostrarTexto(
+                                        ConsoleColor.DarkYellow,
+                                        "Modificación cancelada."
+                                    );
+
                                     break;
                                 }
 
-                                Console.WriteLine("Nueva descripción: ");
-                                contenido.Descripcion = Console.ReadLine();
+                                bool modificando = true;
 
-                                Console.Write("Nuevo año: ");
-
-                                if (!int.TryParse(Console.ReadLine(), out int anio))
+                                while (modificando)
                                 {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow, "Año inválido.");
-                                    break;
+                                    Console.WriteLine("\n¿Qué dato desea modificar?");
+                                    Console.WriteLine("1. Título");
+                                    Console.WriteLine("2. Descripción");
+                                    Console.WriteLine("3. Año de lanzamiento");
+                                    Console.WriteLine("4. Género");
+                                    Console.WriteLine("5. Duración / Capítulos");
+                                    Console.WriteLine("0. Cancelar");
+
+                                    Console.Write("Seleccione una opción: ");
+
+                                    string opcionModificar = Console.ReadLine() ?? "";
+
+                                    switch (opcionModificar)
+                                    {
+                                        case "1":
+                                            Console.Write("Nuevo título: ");
+                                            string titulo = Console.ReadLine() ?? "";
+
+                                            if (string.IsNullOrWhiteSpace(titulo))
+                                            {
+                                                UtilidadesConsola.MostrarTexto(
+                                                    ConsoleColor.DarkYellow,
+                                                    "El título no puede estar vacío."
+                                                );
+                                                break;
+                                            }
+
+                                            contenido.Titulo = titulo;
+                                            break;
+
+                                        case "2":
+                                            Console.Write("Nueva descripción: ");
+                                            contenido.Descripcion = Console.ReadLine() ?? "";
+                                            break;
+
+                                        case "3":
+                                            Console.Write("Nuevo año: ");
+
+                                            if (!int.TryParse(Console.ReadLine(), out int anio))
+                                            {
+                                                UtilidadesConsola.MostrarTexto(
+                                                    ConsoleColor.DarkYellow,
+                                                    "Año inválido."
+                                                );
+                                                break;
+                                            }
+
+                                            contenido.AnioLanzamiento = anio;
+                                            break;
+
+                                        case "4":
+                                            contenido.Genero = LeerGenero();
+                                            break;
+
+                                        case "5":
+                                            contenido.Duracion = LeerDuracion(contenido.Tipo);
+                                            break;
+
+                                        case "0":
+                                            modificando = false;
+                                            break;
+
+                                        default:
+                                            UtilidadesConsola.MostrarTexto(
+                                                ConsoleColor.DarkYellow,
+                                                "Opción inválida."
+                                            );
+                                            break;
+                                    }
+
+                                    if (opcionModificar == "0")
+                                        break;
+
+                                    if (opcionModificar == "1" ||
+                                        opcionModificar == "2" ||
+                                        opcionModificar == "3" ||
+                                        opcionModificar == "4" ||
+                                        opcionModificar == "5")
+                                    {
+                                        bool modificado = contenidoDAO.ModificarContenido(contenido);
+
+                                        if (modificado)
+                                        {
+                                            UtilidadesConsola.MostrarTexto(
+                                                ConsoleColor.Green,
+                                                "Contenido modificado correctamente."
+                                            );
+
+                                            string continuar;
+
+                                            do
+                                            {
+                                                Console.Write("\n¿Desea seguir modificando este contenido? (S/N): ");
+                                                continuar = Console.ReadLine() ?? "";
+
+                                                if (!continuar.Equals("S", StringComparison.OrdinalIgnoreCase) &&
+                                                    !continuar.Equals("N", StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    UtilidadesConsola.MostrarTexto(
+                                                        ConsoleColor.DarkYellow,
+                                                        "Opción inválida. Ingrese S o N."
+                                                    );
+                                                }
+
+                                            } while (!continuar.Equals("S", StringComparison.OrdinalIgnoreCase) &&
+                                                     !continuar.Equals("N", StringComparison.OrdinalIgnoreCase));
+
+                                            if (continuar.Equals("N", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                modificando = false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            UtilidadesConsola.MostrarTexto(
+                                                ConsoleColor.Red,
+                                                "No se pudo modificar el contenido."
+                                            );
+
+                                            modificando = false;
+                                        }
+
+                                    }
                                 }
-
-                                contenido.AnioLanzamiento = anio;
-
-                                contenido.Genero = LeerGenero();
-
-                                bool modificado = contenidoDAO.ModificarContenido(contenido);
-
-                                if (modificado)
-                                {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.Green, "Contenido modificado correctamente.");
-                                }
-                                else
-                                {
-                                    UtilidadesConsola.MostrarTexto(ConsoleColor.Red, "No se pudo modificar el contenido.");
-                                }
-
-                                break;
 
                             }
 
+                            break;
+                        
                         case 5:
                             {
                                 while (true)
                                 {
-                                    List<Contenido> peliculas = contenidoDAO.ObtenerPeliculas();
+                                    List<Contenido> peliculas = contenidoDAO.ObtenerTodosActivos();
 
                                     if (peliculas.Count == 0)
                                     {

@@ -4,34 +4,20 @@
 
 ID    CONTENIDO   OPERACION         FECHA Y HORA           DETALLES
 --------------------------------------------------------------------------------------------------------------
-1     16          ALTA              2026-10-29 01:21:41    Se registró el contenido: Masita killer | Usuario: 0
+1     1           ALTA              2026-11-03 01:38:47    Se registró el contenido: Jorge | Usuario: 0
 
-2     17          ALTA              2026-10-29 18:40:42    Se registró el contenido: La Monja | Usuario: 0
+2     2           ALTA              2026-11-04 17:30:01    Se registró el contenido: The Batman | Usuario: 0
 
-3     18          ALTA              2026-10-30 21:10:02    Se registró el contenido: Omeostasis | Usuario: 0
+3     1           BAJA              2026-11-04 17:37:26    Se dio de baja el contenido: Jorge. Estado: activo -> inactivo. | Usuario: 0
 
-4     3           MODIFICACION      2026-10-30 22:22:09    Titulo: 'Matrix' -> 'Matrix reloaded'. Descripción: 'Un programador descubre una realidad simulada.' -> 'neo vuelve a la matrix a salvar a trinity'. Año: '1999' -> '2003'. Duración: '0' -> '0'.  | Usuario: 0
+4     1           REACTIVACION      2026-11-04 17:41:24    Se reactivó el contenido: Jorge. Estado: inactivo -> activo. | Usuario: 0
 
-5     18          BAJA              2026-10-30 22:45:46    Se dio de baja el contenido: Omeostasis. Estado: activo -> inactivo. | Usuario: 0
+5     0           ALTA              2026-11-05 22:41:02    Contenido ID 51 | Se registró el contenido: Insurgente | Usuario: 0
 
-6     0           ALTA              2026-10-30 23:06:44    Contenido ID 19 | Se registró el contenido: Porgramador junior | Usuario: 0
+6     0           ALTA              2026-11-05 22:45:21    Contenido ID 52 | Se registró el contenido: The Umbrella Academy | Usuario: 0
 
-7     0           BAJA              2026-10-30 23:06:58    Contenido ID 19 | Se dio de baja el contenido: Porgramador junior. Estado: activo -> inactivo. | Usuario: 0
+7     0           ELIMINACION       2026-11-05 22:56:54    Se eliminó definitivamente el contenido ID 51: Insurgente. | Usuario: 0
 
-8     9           REACTIVACION      2026-10-30 23:21:33    Se reactivó el contenido: La monja. Estado: inactivo -> activo. | Usuario: 0
+8     0           ELIMINACION       2026-11-05 22:57:10    Se eliminó definitivamente el contenido ID 52: The Umbrella Academy. | Usuario: 0
 
-9     0           REACTIVACION      2026-10-30 23:48:48    Contenido ID 19 | Se reactivó el contenido: Porgramador junior. Estado: inactivo -> activo. | Usuario: 0
-
-10    0           ELIMINACION       2026-10-30 23:49:12    Se eliminó definitivamente el contenido ID 19: Porgramador junior. | Usuario: 0
-
-11    0           ALTA              2026-10-31 16:33:52    Contenido ID 20 | Se registró el contenido: Jorge el borracho | Usuario: 0
-
-12    0           MODIFICACION      2026-10-31 16:34:09    Contenido ID 20 | Titulo: 'Jorge el borracho' -> 'Jorge el demente'. Descripción: 'un mono que tomaba whisky' -> 'empezó a tomar merca'. Año: '2023' -> '2024'. Duración: '0' -> '0'.  | Usuario: 0
-
-13    18          REACTIVACION      2026-10-31 16:38:26    Se reactivó el contenido: Omeostasis. Estado: inactivo -> activo. | Usuario: 0
-
-14    18          BAJA              2026-10-31 16:39:30    Se dio de baja el contenido: Omeostasis. Estado: activo -> inactivo. | Usuario: 0
-
-15    0           ELIMINACION       2026-10-31 16:39:45    Se eliminó definitivamente el contenido ID 20: Jorge el demente. | Usuario: 0
-
-=========================================================================================
+================================================================================
