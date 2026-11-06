@@ -45,19 +45,34 @@ namespace PlataformaStreaming
                 return false;
             }
 
-            // leer la clave del archivo
-            string claveArchivo = File.ReadAllText(rutaArchivo).Trim();
+            //Intenta leer la clave del archivo pero está atento a posibles errores.
+            string claveArchivo;
 
-            // temporal
-            /*
-            Console.WriteLine($"Ruta real: {rutaArchivo}");
-            Console.WriteLine($"La clave leída: {claveArchivo}");
-            Console.WriteLine($"Clave esperada: {claveValida}");
-            Console.ReadKey();
-            */
+            try
+            {
+                claveArchivo = File.ReadAllText(rutaArchivo).Trim();
+            }
+            catch (IOException)
+            {
+                MostrarTexto(
+                    ConsoleColor.Red,
+                    "No se pudo leer el archivo de licencia."
+                );
 
-            // compararla con claveValida
-            if (claveArchivo == claveValida)
+                return false;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                MostrarTexto(
+                    ConsoleColor.Red,
+                    "No tenés permisos para acceder al archivo de licencia."
+                );
+
+                return false;
+            }
+
+            //Hace una comparación exacta entre la clave válida y la clave que se almacena en el archivo.
+            if (string.Equals(claveArchivo, claveValida, StringComparison.Ordinal))
             {
                 MostrarTexto(
                     ConsoleColor.Green,

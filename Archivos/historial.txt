@@ -20,4 +20,18 @@ ID    CONTENIDO   OPERACION         FECHA Y HORA           DETALLES
 
 8     0           ELIMINACION       2026-11-05 22:57:10    Se eliminó definitivamente el contenido ID 52: The Umbrella Academy. | Usuario: 0
 
+9     1           MODIFICACION      2026-11-05 23:16:55    Titulo: 'La Ciudad Perdida' -> 'El Conjuro 2'. Descripción: '"Un arqueólogo encuentra un mapa que conduce a una antigua civilización escondida en medio de la selva".' -> 'hola como estas'. Año: '2018' -> '2005'. Género: 'Aventura' -> 'Terror'. Duración: '132' -> '109'.  | Usuario: 0
+
+10    13          MODIFICACION      2026-11-05 23:48:16    Titulo: 'El reino secreto' -> 'El reino de las mariposas'. Descripción: 'Una adolescente descubre un mundo secreto habitado por pequeños seres que protegen el bosque. Allí deberá colaborar con sus nuevos amigos para evitar que las fuerzas oscuras destruyan ese lugar.' -> 'Una adolescente descubre un mundo secreto habitado por pequeños seres que protegen el bosque. Allí deberá colaborar con sus nuevos amigos para evitar que las fuerzas oscuras destruyan ese lugar.'. Año: '2013' -> '2013'. Género: 'Animación / Fantasía' -> 'Animación / Fantasía'. Duración: '102' -> '102'.  | Usuario: 0
+
+11    13          MODIFICACION      2026-11-05 23:56:49    Titulo: 'El reino de las mariposas' -> 'El Reino Secreto'. Descripción: 'Una adolescente descubre un mundo secreto habitado por pequeños seres que protegen el bosque. Allí deberá colaborar con sus nuevos amigos para evitar que las fuerzas oscuras destruyan ese lugar.' -> 'Una adolescente descubre un mundo secreto habitado por pequeños seres que protegen el bosque. Allí deberá colaborar con sus nuevos amigos para evitar que las fuerzas oscuras destruyan ese lugar.'. Año: '2013' -> '2013'. Género: 'Animación / Fantasía' -> 'Animación / Fantasía'. Duración: '102' -> '102'.  | Usuario: 0
+
+12    28          MODIFICACION      2026-11-05 23:57:32    Titulo: 'Game of Thrones' -> 'Juego de Tronos'. Descripción: 'Varias familias nobles luchan por conquistar el Trono de Hierro mientras enfrentan conflictos políticos, traiciones y amenazas sobrenaturales.' -> 'Varias familias nobles luchan por conquistar el Trono de Hierro mientras enfrentan conflictos políticos, traiciones y amenazas sobrenaturales.'. Año: '2011' -> '2011'. Género: 'Fantasía / Drama' -> 'Fantasía / Drama'. Duración: '73' -> '73'.  | Usuario: 0
+
+13    28          MODIFICACION      2026-11-05 23:58:28    Titulo: 'Juego de Tronos' -> 'Game of Thrones'. Descripción: 'Varias familias nobles luchan por conquistar el Trono de Hierro mientras enfrentan conflictos políticos, traiciones y amenazas sobrenaturales.' -> 'Varias familias nobles luchan por conquistar el Trono de Hierro mientras enfrentan conflictos políticos, traiciones y amenazas sobrenaturales.'. Año: '2011' -> '2011'. Género: 'Fantasía / Drama' -> 'Fantasía / Drama'. Duración: '73' -> '73'.  | Usuario: 0
+
+14    0           ALTA              2026-11-06 00:53:22    Contenido ID 53 | Se registró el contenido: Julita pro | Usuario: 1
+
+15    0           ELIMINACION       2026-11-06 00:54:20    Se eliminó definitivamente el contenido ID 53: Julita pro. | Usuario: 1
+
 ================================================================================

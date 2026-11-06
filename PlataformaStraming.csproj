@@ -11,9 +11,9 @@
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.13" />
 	  
 	<!-- Copiar licencia.txt al directorio de salida -->
-	<None Update="Archivos/licencia.txt">
-		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</None>
+	  <None Update="Archivos/licencia.txt">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  
   </ItemGroup>
 

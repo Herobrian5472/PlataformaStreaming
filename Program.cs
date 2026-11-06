@@ -63,21 +63,16 @@ namespace PlataformaStreaming
                     }
 
                     // si se autenticó, ingresar al menú de contenidos
-                    if (usuario != null)
-                    {
-                       UtilidadesConsola.MostrarTexto(ConsoleColor.Green, (
-                            "\n¡Bienvenido " + usuario.NombreUsuario + "!"
-                        ));
+                    UtilidadesConsola.MostrarTexto(ConsoleColor.Green,$"\n¡Bienvenido {usuario.NombreUsuario}!");
 
-                        MenuContenidos menu = new MenuContenidos(usuario);
-                        menu.Mostrar();
-                    }
+                    MenuContenidos menu = new MenuContenidos(usuario);
+                    menu.Mostrar();
                 }
                 
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString()); // temporal: volver a poner "Error: " + ex.Message
+                UtilidadesConsola.MostrarTexto(ConsoleColor.Red,$"Ocurrió un error inesperado: {ex.Message}");
             }
 
             Console.WriteLine("\nPresioná una tecla para salir...");

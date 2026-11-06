@@ -456,16 +456,11 @@ namespace PlataformaStreaming
                                 if (contenidosBajas.Count == 0)
                                 {
                                     MostrarTexto(
-                                        ConsoleColor.Yellow,
-                                        "No hay contenidos dados de baja."
-                                    );
+                                        ConsoleColor.Yellow,"No hay contenidos dados de baja.");
                                 }
                                 else
                                 {
-                                    MostrarTexto(
-                                        ConsoleColor.Yellow,
-                                        "--- CONTENIDOS PARA REACTIVAR---"
-                                    );
+                                    MostrarTexto(ConsoleColor.Yellow,"--- CONTENIDOS PARA REACTIVAR---");
 
                                     foreach (Contenido contenido in contenidosBajas)
                                     {
@@ -484,25 +479,16 @@ namespace PlataformaStreaming
 
                                         if (resultado)
                                         {
-                                            MostrarTexto(
-                                                ConsoleColor.Green,
-                                                "contenido reactivado correctamente."
-                                            );
+                                            MostrarTexto(ConsoleColor.Green,"contenido reactivado correctamente.");
                                         }
                                         else
                                         {
-                                            MostrarTexto(
-                                                ConsoleColor.Red,
-                                                "No se encontró un contenido dado de baja con ese ID."
-                                            );
+                                            MostrarTexto(ConsoleColor.Red,"No se encontró un contenido dado de baja con ese ID.");
                                         }
                                     }
                                     else
                                     {
-                                        MostrarTexto(
-                                            ConsoleColor.Red,
-                                            "ID inválido."
-                                        );
+                                        MostrarTexto(ConsoleColor.Red,"ID inválido.");
                                     }
                                 }
 
@@ -512,10 +498,50 @@ namespace PlataformaStreaming
                         case 9:
                             {
                                 HistorialDAO historialDAO = new HistorialDAO();
+
                                 List<Historial> historial = historialDAO.ObtenerHistorial();
-                                historialDAO.DescargarHistorial(historial);
+
+                                // Si no hay movimientos, volvemos al menú.
+                                if (historial.Count == 0)
+                                {
+                                    break;
+                                }
+                                    
+
+                                // Mostramos el historial en consola.
+                                historialDAO.MostrarHistorial(historial);
+
+                                bool respuestaValida = false;
+
+                                while (!respuestaValida)
+                                {
+                                    Console.WriteLine();
+                                    Console.Write("¿Desea exportar el historial a un archivo TXT? (S/N): ");
+
+                                    string respuesta = (Console.ReadLine() ?? "").Trim().ToUpperInvariant();
+
+                                    if (respuesta == "S" || respuesta == "SI")
+                                    {
+                                        historialDAO.DescargarHistorial(historial);
+                                        respuestaValida = true;
+                                    }
+                                    else if (respuesta == "N" || respuesta == "NO")
+                                    {
+                                        UtilidadesConsola.MostrarTexto(
+                                            ConsoleColor.Yellow,
+                                            "Volviendo al menú principal..."
+                                        );
+
+                                        respuestaValida = true;
+                                    }
+                                    else
+                                    {
+                                        UtilidadesConsola.MostrarTexto(ConsoleColor.DarkYellow,"Opción inválida. Ingrese S para sí o N para no.");
+                                    }
+                                }
+
                                 break;
-                            }     
+                            }
 
                         case 10:
                             {

@@ -127,9 +127,41 @@ namespace PlataformaStreaming
             return resultados;
         }
 
+        //Método para validaciones
+        private string ValidarContenido(Contenido contenido)
+        {
+            if (contenido == null)
+                throw new ArgumentNullException(nameof(contenido));
+
+            if (string.IsNullOrWhiteSpace(contenido.Titulo))
+                throw new ArgumentException("El título no puede estar vacío.");
+
+            if (string.IsNullOrWhiteSpace(contenido.Genero))
+                throw new ArgumentException("El género no puede estar vacío.");
+
+            if (contenido.AnioLanzamiento < 1888 || contenido.AnioLanzamiento > DateTime.Now.Year)
+            {
+                throw new ArgumentException("El año de lanzamiento no es válido.");
+            }
+
+            if (contenido.Duracion <= 0)
+                throw new ArgumentException("La duración debe ser mayor que cero.");
+
+            string tipoNormalizado = contenido.Tipo?.Trim().ToLowerInvariant() ?? "";
+
+            tipoNormalizado = tipoNormalizado.Replace("í", "i");
+
+            if (tipoNormalizado != "pelicula" && tipoNormalizado != "serie")
+                throw new ArgumentException("El tipo de contenido no es válido.");
+
+            return tipoNormalizado == "pelicula" ? "Pelicula" : "Serie";
+        }
+
         // void significa que el metodo no devuelve un resultado
         public void AgregarContenido(Contenido contenido, int usuarioId) // recibe un objeto con los datos de una pelicula o serie
         {
+            string tipoFinal = ValidarContenido(contenido);
+
             string sql = @"
                 INSERT INTO Contenidos
                     (titulo, descripcion, anio_lanzamiento, tipo, genero, estado, duracion)
@@ -153,7 +185,7 @@ namespace PlataformaStreaming
                             comando.Parameters.AddWithValue("@titulo", contenido.Titulo);
                             comando.Parameters.AddWithValue("@descripcion", contenido.Descripcion);
                             comando.Parameters.AddWithValue("@anio", contenido.AnioLanzamiento);
-                            comando.Parameters.AddWithValue("@tipo", contenido.Tipo);
+                            comando.Parameters.AddWithValue("@tipo", tipoFinal);
                             comando.Parameters.AddWithValue("@genero", contenido.Genero ?? "");
                             comando.Parameters.AddWithValue("@estado", 1);
                             comando.Parameters.AddWithValue("@duracion", contenido.Duracion);
@@ -196,6 +228,11 @@ namespace PlataformaStreaming
 
         public bool ModificarContenido(Contenido contenido, int usuarioId)
         {
+            string tipoFinal = ValidarContenido(contenido);
+
+            if (contenido.ContenidoId <= 0)
+                throw new ArgumentException("El ID del contenido no es válido.");
+
             string sqlAnterior = @"
                 SELECT titulo, descripcion, anio_lanzamiento, genero, duracion
                 FROM Contenidos
@@ -238,7 +275,7 @@ namespace PlataformaStreaming
                             comandoAnterior.Transaction = transaccion;
 
                             comandoAnterior.Parameters.AddWithValue("@id", contenido.ContenidoId);
-                            comandoAnterior.Parameters.AddWithValue("@tipo", contenido.Tipo);
+                            comandoAnterior.Parameters.AddWithValue("@tipo", tipoFinal);
 
                             using (SqliteDataReader lector = comandoAnterior.ExecuteReader())
                             {
@@ -268,7 +305,7 @@ namespace PlataformaStreaming
                             comando.Parameters.AddWithValue("@anio", contenido.AnioLanzamiento);
                             comando.Parameters.AddWithValue("@duracion", contenido.Duracion);
                             comando.Parameters.AddWithValue("@id", contenido.ContenidoId);
-                            comando.Parameters.AddWithValue("@tipo", contenido.Tipo);
+                            comando.Parameters.AddWithValue("@tipo", tipoFinal);
 
                             int filasAfectadas = comando.ExecuteNonQuery();
 
@@ -294,7 +331,7 @@ namespace PlataformaStreaming
                             transaccion,
                             contenido.ContenidoId,
                             usuarioId,
-                            "ALTA",
+                            "MODIFICACIÓN",
                             detalles
                         );
 
@@ -364,7 +401,6 @@ namespace PlataformaStreaming
                             comando.Transaction = transaccion;
 
                             comando.Parameters.AddWithValue("@id", id);
-                            comando.Parameters.AddWithValue("@tipo", "Pelicula");
 
                             int filasAfectadas = comando.ExecuteNonQuery();
 
@@ -453,7 +489,6 @@ namespace PlataformaStreaming
                             comando.Transaction = transaccion;
 
                             comando.Parameters.AddWithValue("@id", id);
-                            comando.Parameters.AddWithValue("@tipo", "Pelicula");
 
                             int filasAfectadas = comando.ExecuteNonQuery();
 

@@ -43,6 +43,29 @@ namespace PlataformaStreaming
             return logs;
         }
 
+        public void MostrarHistorial(List<Historial> historial)
+        {
+            Console.WriteLine();
+            UtilidadesConsola.MostrarTexto(
+                ConsoleColor.Cyan,
+                "==================== HISTORIAL DE MOVIMIENTOS ===================="
+            );
+
+            Console.WriteLine();
+
+            foreach (Historial h in historial)
+            {
+                Console.WriteLine($"ID del movimiento: {h.HistorialId}");
+                Console.WriteLine($"ID del contenido: {h.ContenidoId}");
+                Console.WriteLine($"Operación: {h.Operacion}");
+                Console.WriteLine($"Fecha y hora: {h.FechaHora}");
+                Console.WriteLine($"Detalles: {h.Detalles}");
+                Console.WriteLine($"Usuario responsable: {h.UsuarioId}");
+
+                Console.WriteLine(new string('-', 65));
+            }
+        }
+
         public void DescargarHistorial(List<Historial> historial) {
             string Ruta = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "Archivos", "historial.txt"));
 
@@ -82,7 +105,7 @@ namespace PlataformaStreaming
                     lineas.Add("");
                 }
 
-                lineas.Add("================================================================================");
+                lineas.Add("==========================================================================================================");
 
                 File.WriteAllLines(Ruta, lineas);
 
