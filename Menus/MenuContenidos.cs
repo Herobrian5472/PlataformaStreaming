@@ -557,20 +557,32 @@ namespace PlataformaStreaming
         // Solicita y valida los datos del contenido sin llenar el case del menú de while.
         private void AgregarNuevoContenido(ContenidoDAO contenidoDAO)
         {
-            Contenido nuevoContenido = new Contenido
-            {
-                Titulo = Menu.EntradaConsola.LeerTextoObligatorio("Título: "),
-                Descripcion = Menu.EntradaConsola.LeerTextoObligatorio("Descripción: "),
-                AnioLanzamiento = LeerAnio(),
-                Tipo = LeerTipoContenido(),
-                Genero = LeerGenero()
-            };
+            string tipo = LeerTipoContenido();
 
-            nuevoContenido.Duracion = LeerDuracion(nuevoContenido.Tipo);
+            Contenido nuevoContenido;
+
+            if (tipo == "Pelicula")
+            {
+                nuevoContenido = new Pelicula();
+            }
+            else
+            {
+                nuevoContenido = new Serie();
+            }
+
+            nuevoContenido.Titulo = Menu.EntradaConsola.LeerTextoObligatorio("Título: ");
+
+            nuevoContenido.Descripcion = Menu.EntradaConsola.LeerTextoObligatorio("Descripción: ");
+
+            nuevoContenido.AnioLanzamiento = LeerAnio();
+
+            nuevoContenido.Genero = LeerGenero();
+
+            nuevoContenido.Duracion = LeerDuracion(tipo);
+
             contenidoDAO.AgregarContenido(nuevoContenido);
 
-            UtilidadesConsola.MostrarTexto(ConsoleColor.Green,
-                $"{nuevoContenido.Tipo} guardada correctamente: {nuevoContenido.Titulo} ({nuevoContenido.AnioLanzamiento}).");
+            UtilidadesConsola.MostrarTexto(ConsoleColor.Green, $"{nuevoContenido.Tipo} guardada correctamente: {nuevoContenido.Titulo} ({nuevoContenido.AnioLanzamiento}).");
         }
 
         private int LeerAnio()

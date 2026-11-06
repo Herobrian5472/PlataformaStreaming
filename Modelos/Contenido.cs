@@ -1,13 +1,28 @@
 ﻿namespace PlataformaStreaming
 {
-    internal class Contenido
+    internal abstract class Contenido
     {
-        public int ContenidoId { get; set; } // Las propiedades { get; set; } permiten consultar y asignar esos valores desde otras partes del programa.
-        public string Titulo { get; set; }
-        public string Descripcion { get; set; }
+        public int ContenidoId { get; set; }
+
+        public string Titulo { get; set; } = string.Empty;
+
+        public string Descripcion { get; set; } = string.Empty;
+
         public int AnioLanzamiento { get; set; }
-        public string Tipo { get; set; }
-        public string Genero { get; set; }
+
+        public string Tipo { get; protected set; }
+
+        public string Genero { get; set; } = string.Empty;
+
         public int Duracion { get; set; }
+
+        // Cada clase hija deberá implementar este método.
+        public abstract string ObtenerUnidadDuracion();
+
+        protected Contenido(string tipo)
+        {
+            Tipo = tipo;
+        }
     }
+
 }

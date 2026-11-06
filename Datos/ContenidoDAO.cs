@@ -6,6 +6,39 @@ namespace PlataformaStreaming
 {
     internal class ContenidoDAO : IContenidoDAO
     {
+
+        //Lee el campo tipo de SQLite. Comprueba si corresponde a una película o a una serie. Crea un objeto de la clase correspondiente. Completa sus propiedades.
+        private Contenido CrearContenidoDesdeLector(SqliteDataReader lector)
+        {
+            string tipo = lector.GetString(4);
+
+            Contenido contenido;
+
+            if (tipo.Equals("Pelicula", StringComparison.OrdinalIgnoreCase))
+            {
+                contenido = new Pelicula();
+            }
+            else if (tipo.Equals("Serie", StringComparison.OrdinalIgnoreCase))
+            {
+                contenido = new Serie();
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    $"Tipo de contenido desconocido: {tipo}");
+            }
+
+            contenido.ContenidoId = lector.GetInt32(0);
+            contenido.Titulo = lector.GetString(1);
+            contenido.Descripcion = lector.IsDBNull(2) ? "" : lector.GetString(2);
+            contenido.AnioLanzamiento = lector.IsDBNull(3) ? 0 : lector.GetInt32(3);
+            contenido.Genero = lector.IsDBNull(5) ? "" : lector.GetString(5);
+            contenido.Duracion = lector.IsDBNull(6) ? 0 : lector.GetInt32(6);
+
+            return contenido;
+        }
+
+
         // Devuelve únicamente las películas activas.
         public List<Contenido> ObtenerPeliculas()
         {
@@ -48,16 +81,7 @@ namespace PlataformaStreaming
                     {
                         while (lector.Read())
                         {
-                            contenidos.Add(new Contenido
-                            {
-                                ContenidoId = lector.GetInt32(0),
-                                Titulo = lector.GetString(1),
-                                Descripcion = lector.IsDBNull(2) ? "" : lector.GetString(2),
-                                AnioLanzamiento = lector.IsDBNull(3) ? 0 : lector.GetInt32(3),
-                                Tipo = lector.GetString(4),
-                                Genero = lector.IsDBNull(5) ? "" : lector.GetString(5),
-                                Duracion = lector.IsDBNull(6) ? 0 : lector.GetInt32(6)
-                            });
+                            contenidos.Add(CrearContenidoDesdeLector(lector));
                         }
                     }
                 }
@@ -94,16 +118,7 @@ namespace PlataformaStreaming
 
                         if (titulo.Contains(tituloBuscado.Trim(), StringComparison.OrdinalIgnoreCase))
                         {
-                            resultados.Add(new Contenido
-                            {
-                                ContenidoId = lector.GetInt32(0),
-                                Titulo = titulo,
-                                Descripcion = lector.IsDBNull(2) ? "" : lector.GetString(2),
-                                AnioLanzamiento = lector.IsDBNull(3) ? 0 : lector.GetInt32(3),
-                                Tipo = lector.GetString(4),
-                                Genero = lector.IsDBNull(5) ? "" : lector.GetString(5),
-                                Duracion = lector.IsDBNull(6) ? 0 : lector.GetInt32(6)
-                            });
+                            resultados.Add(CrearContenidoDesdeLector(lector));
                         }
                     }
                 }
@@ -493,15 +508,8 @@ namespace PlataformaStreaming
                     {
                         while (lector.Read())
                         {
-                            Contenido contenido = new Contenido();
 
-                            contenido.ContenidoId = lector.GetInt32(0);
-                            contenido.Titulo = lector.GetString(1);
-                            contenido.Descripcion = lector.IsDBNull(2) ? "" : lector.GetString(2);
-                            contenido.AnioLanzamiento = lector.IsDBNull(3) ? 0 : lector.GetInt32(3);
-                            contenido.Tipo = lector.GetString(4);
-                            contenido.Genero = lector.IsDBNull(5) ? "" : lector.GetString(5);
-                            contenido.Duracion = lector.IsDBNull(6) ? 0 : lector.GetInt32(6);
+                            Contenido contenido = CrearContenidoDesdeLector(lector);
 
                             peliculas.Add(contenido);
                         }
