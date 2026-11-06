@@ -229,7 +229,7 @@ namespace PlataformaStreaming
                                         opcionModificar == "4" ||
                                         opcionModificar == "5")
                                     {
-                                        bool modificado = contenidoDAO.ModificarContenido(contenido);
+                                        bool modificado = contenidoDAO.ModificarContenido(contenido, usuario.UsuarioId);
 
                                         if (modificado)
                                         {
@@ -339,7 +339,7 @@ namespace PlataformaStreaming
 
                                         if (confirmacion == "S")
                                         {
-                                            bool eliminado = contenidoDAO.EliminarContenido(id);
+                                            bool eliminado = contenidoDAO.EliminarContenido(id, usuario.UsuarioId);
 
                                             if (eliminado)
                                             {
@@ -400,7 +400,7 @@ namespace PlataformaStreaming
                                     break;
                                 }
 
-                                bool resultado = contenidoDAO.DarBajaContenido(id);
+                                bool resultado = contenidoDAO.DarBajaContenido(id, usuario.UsuarioId);
 
                                 if (resultado)
                                 {
@@ -480,7 +480,7 @@ namespace PlataformaStreaming
 
                                     if (int.TryParse(Console.ReadLine(), out int id))
                                     {
-                                        bool resultado = contenidoDAO.DarAltaContenido(id);
+                                        bool resultado = contenidoDAO.DarAltaContenido(id, usuario.UsuarioId);
 
                                         if (resultado)
                                         {
@@ -705,7 +705,7 @@ namespace PlataformaStreaming
 
             nuevoContenido.Duracion = LeerDuracion(tipo);
 
-            contenidoDAO.AgregarContenido(nuevoContenido);
+            contenidoDAO.AgregarContenido(nuevoContenido, usuario.UsuarioId);
 
             UtilidadesConsola.MostrarTexto(ConsoleColor.Green, $"{nuevoContenido.Tipo} guardada correctamente: {nuevoContenido.Titulo} ({nuevoContenido.AnioLanzamiento}).");
         }

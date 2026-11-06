@@ -128,7 +128,7 @@ namespace PlataformaStreaming
         }
 
         // void significa que el metodo no devuelve un resultado
-        public void AgregarContenido(Contenido contenido) // recibe un objeto con los datos de una pelicula o serie
+        public void AgregarContenido(Contenido contenido, int usuarioId) // recibe un objeto con los datos de una pelicula o serie
         {
             string sql = @"
                 INSERT INTO Contenidos
@@ -176,6 +176,7 @@ namespace PlataformaStreaming
                             conexion,
                             transaccion,
                             contenidoId,
+                            usuarioId,
                             "ALTA",
                             $"Se registró el contenido: {contenido.Titulo}"
                         );
@@ -193,7 +194,7 @@ namespace PlataformaStreaming
 
         }
 
-        public bool ModificarContenido(Contenido contenido)
+        public bool ModificarContenido(Contenido contenido, int usuarioId)
         {
             string sqlAnterior = @"
                 SELECT titulo, descripcion, anio_lanzamiento, genero, duracion
@@ -292,7 +293,8 @@ namespace PlataformaStreaming
                             conexion,
                             transaccion,
                             contenido.ContenidoId,
-                            "MODIFICACION",
+                            usuarioId,
+                            "ALTA",
                             detalles
                         );
 
@@ -309,7 +311,7 @@ namespace PlataformaStreaming
             }
         }
 
-        public bool DarBajaContenido(int id)
+        public bool DarBajaContenido(int id, int usuarioId)
         {
             string sqlTitulo = @"
                 SELECT titulo
@@ -380,6 +382,7 @@ namespace PlataformaStreaming
                             conexion,
                             transaccion,
                             id,
+                            usuarioId,
                             "BAJA",
                             $"Se dio de baja el contenido: {titulo}. Estado: activo -> inactivo."
                         );
@@ -397,7 +400,7 @@ namespace PlataformaStreaming
             }
         }
 
-        public bool DarAltaContenido(int id)
+        public bool DarAltaContenido(int id, int usuarioId)
         {
             string sqlTitulo = @"
                 SELECT titulo
@@ -468,6 +471,7 @@ namespace PlataformaStreaming
                             conexion,
                             transaccion,
                             id,
+                            usuarioId,
                             "REACTIVACION",
                             $"Se reactivó el contenido: {titulo}. Estado: inactivo -> activo."
                         );
@@ -521,7 +525,7 @@ namespace PlataformaStreaming
 
         }
 
-        public bool EliminarContenido(int id) // temporal, lo ideal es marcar una película como BAJADA o INACTIVA
+        public bool EliminarContenido(int id, int usuarioId) // temporal, lo ideal es marcar una película como BAJADA o INACTIVA
         {
             string sqlTitulo = @"
                 SELECT titulo
@@ -570,6 +574,7 @@ namespace PlataformaStreaming
                             conexion,
                             transaccion,
                             null,
+                            usuarioId,
                             "ELIMINACION",
                             $"Se eliminó definitivamente el contenido ID {id}: {titulo}."
                         );

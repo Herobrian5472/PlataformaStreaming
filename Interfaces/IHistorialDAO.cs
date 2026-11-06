@@ -9,6 +9,7 @@ namespace PlataformaStreaming.Interfaces {
             SqliteConnection conexion,
             SqliteTransaction transaccion,
             int? contenidoId,
+            int usuarioId,
             string operacion,
             string detalles);
     }

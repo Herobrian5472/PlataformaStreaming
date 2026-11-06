@@ -91,19 +91,20 @@ namespace PlataformaStreaming
                 UtilidadesConsola.MostrarTexto(ConsoleColor.Red, "Ocurrió un error inesperado, el historial no fue descargado.");
             }
         }
-                
+
         public void RegistrarMovimiento(
             SqliteConnection conexion,
             SqliteTransaction transaccion,
-            int? contenidoId, // por si es nulo
-            string operacion, 
+            int? contenidoId,
+            int usuarioId,
+            string operacion,
             string detalles)
         {
             string sql = @"
-                INSERT INTO Historial 
-                    (contenido_id, operacion, detalles)
-                VALUES 
-                    (@contenidoId, @operacion, @detalles);
+                INSERT INTO Historial
+                    (contenido_id, usuario_id, operacion, detalles)
+                VALUES
+                    (@contenidoId, @usuarioId, @operacion, @detalles);
             ";
 
             // contenidoId: identifica la pelicula o serie afectada
@@ -121,6 +122,7 @@ namespace PlataformaStreaming
                     contenidoId.HasValue ? (object)contenidoId.Value : DBNull.Value
                 );
 
+                comando.Parameters.AddWithValue("@usuarioId", usuarioId);
                 comando.Parameters.AddWithValue("@operacion", operacion); 
                 comando.Parameters.AddWithValue("@detalles", detalles);
 

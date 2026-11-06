@@ -6,11 +6,11 @@ namespace PlataformaStreaming.Interfaces {
         public List<Contenido> ObtenerSeries();
         public List<Contenido> ObtenerTodosActivos();
         public List<Contenido> BuscarPorTitulo(string tituloBuscado);
-        public void AgregarContenido(Contenido contenido);
-        public bool ModificarContenido(Contenido contenido);
-        public bool DarBajaContenido(int id);
-        public bool DarAltaContenido(int id);
+        public void AgregarContenido(Contenido contenido, int usuarioId);
+        public bool ModificarContenido(Contenido contenido, int usuarioId);
+        public bool DarBajaContenido(int id, int usuarioId);
+        public bool DarAltaContenido(int id, int usuarioId);
         public List<Contenido> MostrarBajas();
-        public bool EliminarContenido(int id);
+        public bool EliminarContenido(int id, int usuarioId);
     }
 }
