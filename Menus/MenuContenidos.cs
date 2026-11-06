@@ -662,10 +662,10 @@ namespace PlataformaStreaming
 
             foreach (Contenido contenido in contenidos)
             {
-                string unidad = contenido.Tipo == "Pelicula" ? "minutos" : "episodios";
+                string unidad = contenido.Tipo.Equals("Pelicula", StringComparison.OrdinalIgnoreCase) ? "minutos" : "episodios";
 
                 Console.WriteLine($"\n{contenido.ContenidoId} - {contenido.Titulo} ({contenido.AnioLanzamiento})");
-                Console.WriteLine($"Tipo: {contenido.Tipo} | Género: {contenido.Genero} | Duración: {contenido.Duracion} {unidad}");
+                Console.WriteLine($"Género: {contenido.Genero} | Duración: {contenido.Duracion} {unidad}");
 
                 if (mostrarDescripcion)
                     Console.WriteLine($"Descripción: {contenido.Descripcion}");
@@ -673,16 +673,16 @@ namespace PlataformaStreaming
 
             if (preguntarReproduccion)
             {
-                if (reproducirDirectamente)
-                    PreguntarReproduccionDirecta(contenidos);
-                else
-                    PreguntarSiDeseaReproducir(contenidos);
+                if (reproducirDirectamente) { PreguntarReproduccionDirecta(contenidos); }
+
+                else {PreguntarSiDeseaReproducir(contenidos);}
+                    
             }
         }
 
         private void PreguntarReproduccionDirecta(List<Contenido> contenidos)
         {
-            Console.Write("\n¿Desea reproducir alguno de estos contenidos? (S/N): ");
+            Console.Write("\n¿Desea reproducir este contenido? (S/N): ");
             string respuesta = (Console.ReadLine() ?? "").Trim();
 
             while (!respuesta.Equals("S", StringComparison.OrdinalIgnoreCase) &&
@@ -691,7 +691,7 @@ namespace PlataformaStreaming
                 UtilidadesConsola.MostrarTexto(ConsoleColor.Red,
                     "Opción inválida. Ingrese S o N.");
 
-                Console.Write("\n¿Desea reproducir alguno de estos contenidos? (S/N): ");
+                Console.Write("\n¿Desea reproducir este contenido? (S/N): ");
                 respuesta = (Console.ReadLine() ?? "").Trim();
             }
 
@@ -785,16 +785,39 @@ namespace PlataformaStreaming
         private void MostrarMenuReproduccion(Contenido contenido)
         {
             bool reproduciendo = true;
-            string tipo = contenido.Tipo == "Pelicula" ? "PELÍCULA" : "SERIE";
+            int capituloActual = 1;
 
-            UtilidadesConsola.MostrarTexto(ConsoleColor.Green,
+            bool esSerie = string.Equals(
+                contenido.Tipo,
+                "Serie",
+                StringComparison.OrdinalIgnoreCase);
+
+            string tipo = esSerie ? "SERIE" : "PELÍCULA";
+
+            UtilidadesConsola.MostrarTexto(
+                ConsoleColor.Green,
                 $"\nREPRODUCIENDO {tipo}: {contenido.Titulo}");
 
             while (true)
             {
-                Console.WriteLine(reproduciendo ? "\nEstado: REPRODUCIENDO" : "\nEstado: PAUSADO");
+                Console.WriteLine(reproduciendo
+                    ? "\nEstado: REPRODUCIENDO"
+                    : "\nEstado: PAUSADO");
+
+                if (esSerie)
+                {
+                    Console.WriteLine($"Capítulo: {capituloActual} de {contenido.Duracion}");
+                }
+
                 Console.WriteLine("1. PAUSAR");
                 Console.WriteLine("2. REPRODUCIR");
+
+                if (esSerie)
+                {
+                    Console.WriteLine("3. SIGUIENTE CAPÍTULO");
+                    Console.WriteLine("4. CAPÍTULO ANTERIOR");
+                }
+
                 Console.WriteLine("0. VOLVER");
                 Console.Write("Seleccione una opción: ");
 
@@ -810,6 +833,7 @@ namespace PlataformaStreaming
                     else
                     {
                         reproduciendo = false;
+
                         UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow,
                             "Reproducción pausada.");
                     }
@@ -824,8 +848,39 @@ namespace PlataformaStreaming
                     else
                     {
                         reproduciendo = true;
+
                         UtilidadesConsola.MostrarTexto(ConsoleColor.Green,
                             "Reproduciendo...");
+                    }
+                }
+                else if (opcion == "3" && esSerie)
+                {
+                    if (capituloActual < contenido.Duracion)
+                    {
+                        capituloActual++;
+
+                        UtilidadesConsola.MostrarTexto(ConsoleColor.Green,
+                            $"Pasando al capítulo {capituloActual} de {contenido.Duracion}.");
+                    }
+                    else
+                    {
+                        UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow,
+                            "Ya estás en el último capítulo de esta serie.");
+                    }
+                }
+                else if (opcion == "4" && esSerie)
+                {
+                    if (capituloActual > 1)
+                    {
+                        capituloActual--;
+
+                        UtilidadesConsola.MostrarTexto(ConsoleColor.Green,
+                            $"Volviendo al capítulo {capituloActual} de {contenido.Duracion}.");
+                    }
+                    else
+                    {
+                        UtilidadesConsola.MostrarTexto(ConsoleColor.Yellow,
+                            "Ya estás en el primer capítulo de esta serie.");
                     }
                 }
                 else if (opcion == "0")

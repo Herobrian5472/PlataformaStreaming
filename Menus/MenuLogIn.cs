@@ -31,7 +31,7 @@ namespace PlataformaStreaming
                 Console.WriteLine("2. Inicia sesión");
                 Console.WriteLine("0. Salir");
 
-                Console.Write("\nElegí una opción:");
+                Console.Write("\nElegí una opción: ");
 
                 if (!int.TryParse(Console.ReadLine(), out int opcion))
                 {
